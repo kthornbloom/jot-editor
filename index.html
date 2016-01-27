@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset='utf-8'> 
+<head>
+<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<title>Jot Demo</title> 
+<meta name="A jQuery based text editor">
+<link rel="stylesheet" href="css/jot-theme.css">
+</head>
+<body>
+Editor One
+<div class="jot" id="neweditor"></div>
+
+Editor Two
+<div class="jot" id="neweditor2">Here's some prefilled crap.</div>
+
+Editor Three
+<div class="jot-menu">
+	<a href="#"><img src="jot-icons/ico-bold.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-italic.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-strike.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-clear-formatting.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-paste.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-h1.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-h2.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-h3.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-ul.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-ol.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-blockquote.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-link.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-unlink.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-anchor.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-image.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-table.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-hr.svg" alt=""></a>
+	<a href="#"><img src="jot-icons/ico-code.svg" alt=""></a>
+</div>
+<div class="jot" id="neweditor3"></div>
+<!-- JS ======================================================= --> 
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jot.js"></script>
+<script type="text/javascript">
+	$(window).load( function() {
+		$('.jot').joteditor({
+			/*effectDuration: 3500*/
+		});
+	});
+</script>
+</body>
+</html>
