@@ -14,7 +14,10 @@
 </head>
 <body>
 Editor One
-<div class="jot" id="neweditor"></div>
+<div class="jot" id="neweditor">
+<h1>Here's a title</h1>
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod.
+</div>
 
 Editor Two
 <div class="jot" id="neweditor2">
@@ -30,11 +33,16 @@ Editor Two
 
 Editor Three
 <div class="jot" id="neweditor3"></div>
+
+<input type="text" id="test">
 <!-- JS ======================================================= --> 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jot.js"></script>
 <script type="text/javascript">
 	$(window).load( function() {
+		$(document.body).on("click", "#test", function(event) {
+			event.stopPropagation();
+		});
 		$('#neweditor').joteditor({
 			/*effectDuration: 3500*/
 		});
