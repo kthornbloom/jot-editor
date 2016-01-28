@@ -1,4 +1,45 @@
 .jot {
 	padding:30px;
 	border:1px solid #ccc;
+	background: #fff;
+}
+.jot h1 {
+	font-size:2em;
+	line-height: 1.3em;
+}
+.jot h2 {
+	font-size:1.7em;
+	line-height: 1.3em;
+}
+.jot h3 {
+	font-size:1.3em;
+	line-height: 1.3em;
+}
+.jot-menu {
+	background: #eee;
+}
+.jot-menu:after {
+	content:'';
+	clear:both;
+	display: block;
+	width:100%;
+}
+.jot-divider {
+	width:1px;
+	height: 34px;
+	background:linear-gradient(to top, rgba(0,0,0,0), rgba(0,0,0,.5), rgba(0,0,0,0));
+	display: inline-block;
+	float:left;
+}
+.jot-menu a:link, .jot-menu a:visited {
+	display: inline-block;
+	width:24px;
+	height: 24px;
+	padding:5px;
+	float:left;
+	opacity: .75;
+	transition:.2s;
+}
+.jot-menu a:hover {
+	opacity: 1;
 }
