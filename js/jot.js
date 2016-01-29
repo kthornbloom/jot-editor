@@ -28,7 +28,7 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				toolItalic = "<a href='#' title='italic' onclick='document.execCommand (&#34;italic&#34;, false, null);'><img src='jot-icons/ico-italic.svg'></a>",
 				toolStrike = "<a href='#' title='strike through' onclick='document.execCommand (&#34;strikethrough&#34;, false, null);'><img src='jot-icons/ico-strike.svg'></a>",
 				toolUnderline = "<a href='#' title='underline' onclick='document.execCommand (&#34;underline&#34;, false, null);'><img src='jot-icons/ico-underline.svg'></a>",
-				toolClearformat = "<a href='#' title='clear formatting' id='removeFormatting'><img src='jot-icons/ico-clear-formatting.svg'></a>",
+				toolClearformat = "<a href='#' title='clear formatting' class='removeFormatting'><img src='jot-icons/ico-clear-formatting.svg'></a>",
 				toolH1 = "<a href='#' title='Largest Heading' onclick='wrapElement(&#34;h1&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h1.svg'></a>",
 				toolH2 = "<a href='#' title='Medium Heading' onclick='wrapElement(&#34;h2&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h2.svg'></a>",
 				toolH3 = "<a href='#' title='Small Heading' onclick='wrapElement(&#34;h3&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h3.svg'></a>",
@@ -36,12 +36,12 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				toolOl = "<a href='#' title='Numbered List' onclick='insertList(&#34;li&#34;,&#34;ol&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-ol.svg'></a>",
 				toolBlockquote = "<a href='#' title='Blockquote' onclick='wrapElement(&#34;blockquote&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-blockquote.svg'></a>",
 				toolLink = "<a href='#' title='Link' class='addLink'><img src='jot-icons/ico-link.svg'></a>",
-				toolUnlink = "<a href='#' title='Remove Link' id='removeLink'><img src='jot-icons/ico-unlink.svg'></a>",
+				toolUnlink = "<a href='#' title='Remove Link' class='removeLink'><img src='jot-icons/ico-unlink.svg'></a>",
 				toolAnchor = "<a href='#' title='Anchor' class='addAnchor'><img src='jot-icons/ico-anchor.svg'></a>",
-				toolImage = "<a href='#' title='Insert Image'><img src='jot-icons/ico-image.svg'></a>",
-				toolTable = "<a href='#' title='Insert Table'><img src='jot-icons/ico-table.svg'></a>",
-				toolHr = "<a href='#' title='Insert Horizontal Line'><img src='jot-icons/ico-hr.svg'></a>",
-				toolCode = "<a href='#' title='View Source'><img src='jot-icons/ico-link.svg'></a>",
+				toolImage = "<a href='#' title='Insert Image' class='addImage'><img src='jot-icons/ico-image.svg'></a>",
+				toolTable = "<a href='#' title='Insert Table' class='addTable'><img src='jot-icons/ico-table.svg'></a>",
+				toolHr = "<a href='#' title='Insert Horizontal Line' onclick='document.execCommand(&#34;insertHorizontalRule&#34;, false, null);''><img src='jot-icons/ico-hr.svg'></a>",
+				toolCode = "<a href='#' title='View Source'><img src='jot-icons/ico-code.svg'></a>",
 				toolDivider = "<div class='jot-divider'></div>"
 			
 			$(this).attr('contenteditable','true').wrap('<div class="jot-wrap" id="'+uniqueId+'"></div>');
@@ -215,7 +215,7 @@ function nextNode(node) {
 	}
 }
 
-$(document.body).on("click", "#removeFormatting", function(event) {
+$(document.body).on("click", ".removeFormatting", function(event) {
 	removeSelectedElements("h1,h2,h3,h4,h5,h6,blockquote,figure");
 	document.execCommand('removeFormat', false, 'null');
 	return false;
@@ -411,14 +411,13 @@ $(document.body).on("click", "#"+uniqueId+" .addLink", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','linkreplace','', editorId);
-	startModal('<h1>Link</h1><br><label>URL</label><input type="text" placeholder="http://www.example.com" id="linkURL" autofocus><label>Text</label><input type="text" placeholder="Link Text" id="linkText" value="'+currentlySelected+'"><label>Alt Tag</label><input type="text" id="linkAlt"><a href="#" id="link-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="link-ok" class="jot-button">OK</a>');
+	startModal('<h1>Add Link</h1><br><label>URL</label><input type="text" placeholder="http://www.example.com" id="linkURL" autofocus><label>Text</label><input type="text" placeholder="Link Text" id="linkText" value="'+currentlySelected+'"><a href="#" id="link-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="link-ok" class="jot-button">OK</a>');
 	 $("#linkUrl").focus();
 });
 $(document.body).on("click", "#link-ok", function(event) {
 	var lUrl = $('#linkURL').val(),
 		lText = $('#linkText').val(),
-		lAlt = $('#linkAlt').val(),
-		lCombined = '<a href="'+lUrl+'" alt="'+lAlt+'">'+lText+'</a>';
+		lCombined = '<a href="'+lUrl+'">'+lText+'</a>';
 	$('.linkreplace').replaceWith(lCombined);
 	$('.jot-modal').remove();
 });
@@ -427,7 +426,7 @@ $(document.body).on("click", "#link-cancel", function(event) {
 	$('.linkreplace').contents().unwrap();
 });
 
-$(document.body).on("click", "#removeLink", function(event) {
+$(document.body).on("click", ".removeLink", function(event) {
 	removeSelectedElements("a");
 	document.execCommand('removeFormat', false, 'null');
 	return false;
@@ -444,7 +443,7 @@ $(document.body).on("click", "#"+uniqueId+" .addAnchor", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','anchorreplace','', editorId);
-	startModal('<h1>Add Anchor</h1><br><label>Anchor Name</label><br><input type="text" id="anchorName" autofocus><br><a href="#" id="anchor-cancel">Cancel</a><a href="#" id="anchor-ok">OK</a>');
+	startModal('<h1>Add Anchor</h1><br><label>Anchor Name</label><input type="text" id="anchorName" autofocus><a href="#" id="anchor-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="anchor-ok" class="jot-button">OK</a>');
 	 $("#anchorName").focus();
 });
 $(document.body).on("click", "#anchor-ok", function(event) {
@@ -466,6 +465,12 @@ d888888b .88b  d88.  d888b
 Y888888P YP  YP  YP  Y888P
 */
 document.execCommand("enableObjectResizing", false, false);
+$(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
+	var currentlySelected = getSelectionHtml(),
+		editorId = $(this).parents('.jot-wrap').attr('id');
+	wrapElement('span','','imagereplace','', editorId);
+	startModal('<h1>Add Image</h1><br><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="anchor-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="anchor-ok" class="jot-button">OK</a>');
+});
 /*
 d888888b  .d8b.  d8888b. db      d88888b 
 `~~88~~' d8' `8b 88  `8D 88      88'     
@@ -474,6 +479,43 @@ d888888b  .d8b.  d8888b. db      d88888b
    88    88   88 88   8D 88booo. 88.     
    YP    YP   YP Y8888P' Y88888P Y88888P 
 */
+$(document.body).on("click", "#"+uniqueId+" .addTable", function(event) {
+	var currentlySelected = getSelectionHtml(),
+		editorId = $(this).parents('.jot-wrap').attr('id');
+	wrapElement('span','','tablereplace','', editorId);
+	startModal('<h1>Add Table</h1><br><div class="jot-col-wrap"><div class="jot-col-50"><label>Rows</label><input type="number" min="1" step="1" id="rows" autofocus><label>Columns</label><input type="number" min="1" step="1" id="columns"></div><div class="jot-col-50"><label>Table Width</label><input type="text" value="100%" id="tWidth"></div></div><a href="#" id="table-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="table-ok" class="jot-button">OK</a>');
+	 $("#linkUrl").focus();
+});
+$(document.body).on("click", "#table-ok", function(event) {
+	var tRows = $('#rows').val(),
+		tColumns = $('#columns').val(),
+		tWidth = $('#tWidth').val(),
+		table = '<table class="rwd-table" width="'+tWidth+'"><tbody>';
+
+	for (var i = 1; i <= tRows; i++) {
+		table += '<tr>';
+		for (var j = 1; j <= tColumns; j++) {
+			table += '<td>&nbsp;</td>';
+		}
+		table += '</tr>';
+	}
+	table += '</tbody></table>';
+
+	$('.tablereplace').replaceWith(table);
+	$('.jot-modal').remove();
+});
+$(document.body).on("click", "#table-cancel", function(event) {
+	$('.jot-modal').remove();
+	$('.tablereplace').contents().unwrap();
+});
+
+$('.jot td').bind("contextmenu",function(e){
+   $(this).attr('id','selectedCell');
+   
+   return false;
+}); 
+
+
 		}
 	});
 })(jQuery);

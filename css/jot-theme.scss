@@ -1,6 +1,5 @@
 .jot {
 	padding:30px;
-	border:1px solid #ccc;
 	background: #fff;
 	outline: none;
 	h1 {
@@ -14,6 +13,11 @@
 	h3 {
 		font-size:1.3em;
 		line-height: 1.3em;
+	}
+	hr {
+		border:0;
+		border-bottom:1px solid #ccc;
+		margin:30px 0;
 	}
 	ul, ol {
 		padding:10px 10px 10px 25px;
@@ -36,10 +40,29 @@
 		height:15px;
 		border:1px dotted #ccc;
 	}
-
+	td {
+		border:1px solid #ccc;
+		padding:5px;
+	}
 }
 .jot-menu {
 	background: #eee;
+	a:link, .jot-menu a:visited {
+		display: inline-block;
+		line-height: 0;
+		padding:10px;
+		float:left;
+		opacity: .75;
+		transition:.2s;
+		img {
+			width:18px;
+			height: 18px;
+		}
+	}
+	a:hover {
+		background: #D6D6D6;
+		opacity: 1;
+	}
 }
 .jot-menu:after {
 	content:'';
@@ -49,29 +72,17 @@
 }
 .jot-divider {
 	width:1px;
-	height: 34px;
-	background:linear-gradient(to top, rgba(0,0,0,0), rgba(0,0,0,.5), rgba(0,0,0,0));
+	height: 38px;
+	background:linear-gradient(to top, rgba(0,0,0,0), rgba(0,0,0,.15), rgba(0,0,0,0));
 	display: inline-block;
 	float:left;
-}
-.jot-menu a:link, .jot-menu a:visited {
-	display: inline-block;
-	width:24px;
-	height: 24px;
-	padding:5px;
-	float:left;
-	opacity: .75;
-	transition:.2s;
-}
-.jot-menu a:hover {
-	opacity: 1;
 }
 
 .jot-modal {
 	position: fixed;
 	top:0;
 	left:0;
-	min-height: 100vh;
+	height: 100vh;
 	width:100vw;
 	max-width: 100%;
 	background: rgba(0,0,0,.9);
@@ -101,6 +112,10 @@
 	input:not([type=submit]):not([type=file]):focus {
 		border:1px solid #222;
 	}
+	input[type="file"] {
+		display: block;
+		width:100%;
+	}
 	.jot-button-cancel {
 		padding:10px;
 		border:1px solid #ccc;
@@ -108,10 +123,12 @@
 		display: inline-block;
 		border-radius:4px;
 		transition:.2s;
+		min-width: 100px;
+		text-align: center;
 	}
 	.jot-button-cancel:hover {
-		border:1px solid #9C202D;
-		background:#9C202D;
+		border:1px solid #C82D3D;
+		background:#C82D3D;
 		color:#fff;
 	}
 	.jot-button {
@@ -123,9 +140,24 @@
 		border-radius:4px;
 		float:right;
 		transition:.2s;
+		min-width: 100px;
+		text-align: center;
 	}
 	.jot-button:hover {
 		background:#70C494;
 		color:#fff;
 	}
+}
+
+.jot-col-wrap {
+	display: flex;
+}
+.jot-col-50 {
+	width:50%;
+}
+.jot-col-50:first-of-type {
+	padding-right:15px;
+}
+.jot-col-50:last-of-type {
+	padding-left:15px;
 }
