@@ -35,9 +35,11 @@ html, body {
 	color:rgb(40,20,20);
 	color:rgba(40,20,20,.7);
 	line-height: 1.5em;
-	background:#222;
 }
 
 body {
-	padding:30px;
+	padding:30px;	
+	background:url('../images/bg.jpg') center no-repeat;
+	background-size:cover;
+	background-attachment: fixed;
 }

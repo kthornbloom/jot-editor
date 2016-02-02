@@ -46,7 +46,7 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 			
 			$(this).attr('contenteditable','true').wrap('<div class="jot-wrap" id="'+uniqueId+'"></div>');
 			$(this).attr('id','');
-			$(this).parent().prepend('<div class="jot-menu"></div>');
+			$(this).parent().prepend('<div class="jot-toolbar"></div>');
 
 
 
@@ -54,64 +54,64 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 			for (var i in options.toolbar) {
 				switch (options.toolbar[i]) {
 					case "bold":
-						$(this).parent().find('.jot-menu').append(toolBold);
+						$(this).parent().find('.jot-toolbar').append(toolBold);
 						break;
 					case "italic":
-						$(this).parent().find('.jot-menu').append(toolItalic);
+						$(this).parent().find('.jot-toolbar').append(toolItalic);
 						break;
 					case "strike":
-						$(this).parent().find('.jot-menu').append(toolStrike);
+						$(this).parent().find('.jot-toolbar').append(toolStrike);
 						break;
 					case "underline":
-						$(this).parent().find('.jot-menu').append(toolUnderline);
+						$(this).parent().find('.jot-toolbar').append(toolUnderline);
 						break;
 					case "clearFormat":
-						$(this).parent().find('.jot-menu').append(toolClearformat);
+						$(this).parent().find('.jot-toolbar').append(toolClearformat);
 						break;
 					case "paste":
-						$(this).parent().find('.jot-menu').append(toolPaste);
+						$(this).parent().find('.jot-toolbar').append(toolPaste);
 						break;
 					case "h1":
-						$(this).parent().find('.jot-menu').append(toolH1);
+						$(this).parent().find('.jot-toolbar').append(toolH1);
 						break;
 					case "h2":
-						$(this).parent().find('.jot-menu').append(toolH2);
+						$(this).parent().find('.jot-toolbar').append(toolH2);
 						break;
 					case "h3":
-						$(this).parent().find('.jot-menu').append(toolH3);
+						$(this).parent().find('.jot-toolbar').append(toolH3);
 						break;
 					case "ul":
-						$(this).parent().find('.jot-menu').append(toolUl);
+						$(this).parent().find('.jot-toolbar').append(toolUl);
 						break;
 					case "ol":
-						$(this).parent().find('.jot-menu').append(toolOl);
+						$(this).parent().find('.jot-toolbar').append(toolOl);
 						break;
 					case "blockquote":
-						$(this).parent().find('.jot-menu').append(toolBlockquote);
+						$(this).parent().find('.jot-toolbar').append(toolBlockquote);
 						break;
 					case "link":
-						$(this).parent().find('.jot-menu').append(toolLink);
+						$(this).parent().find('.jot-toolbar').append(toolLink);
 						break;
 					case "unlink":
-						$(this).parent().find('.jot-menu').append(toolUnlink);
+						$(this).parent().find('.jot-toolbar').append(toolUnlink);
 						break;
 					case "anchor":
-						$(this).parent().find('.jot-menu').append(toolAnchor);
+						$(this).parent().find('.jot-toolbar').append(toolAnchor);
 						break;
 					case "image":
-						$(this).parent().find('.jot-menu').append(toolImage);
+						$(this).parent().find('.jot-toolbar').append(toolImage);
 						break;
 					case "table":
-						$(this).parent().find('.jot-menu').append(toolTable);
+						$(this).parent().find('.jot-toolbar').append(toolTable);
 						break;
 					case "hr":
-						$(this).parent().find('.jot-menu').append(toolHr);
+						$(this).parent().find('.jot-toolbar').append(toolHr);
 						break;
 					case "code":
-						$(this).parent().find('.jot-menu').append(toolCode);
+						$(this).parent().find('.jot-toolbar').append(toolCode);
 						break;
 					case "divider":
-						$(this).parent().find('.jot-menu').append(toolDivider);
+						$(this).parent().find('.jot-toolbar').append(toolDivider);
 						break;
 					}
 				}
@@ -358,7 +358,15 @@ $('div[contenteditable]').keydown(function(e) {
 // Modal Function
 startModal = function(content) {
 	$('body').append('<div class="jot-modal"><div class="jot-modal-content">'+content+'</div></div>');
-	
+	$('body').css({
+		overflow: 'hidden',
+		height: '100vh'
+	});
+	$('.jot-modal').css('opacity');
+	$('.jot-modal').css({
+		opacity: 1,
+		transform: 'scale(1)'
+	})
 }
 /* Need a way to remove extra markup 
 $(document).keyup(function(e) {
@@ -370,7 +378,18 @@ $(document).keyup(function(e) {
 });
 */
 closeModal = function(){
-	$('.jot-modal').remove();
+	$('.jot-modal').css({
+		opacity: 0,
+		transform: 'scale(1.5)'
+	});
+	setTimeout(function(){
+		$('.jot-modal').remove();
+	},500);
+	
+	$('body').css({
+		overflow: '',
+		height: ''
+	});
 }
 
 
@@ -412,6 +431,7 @@ $(document.body).on("click", "#"+uniqueId+" .addLink", function(event) {
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','linkreplace','', editorId);
 	startModal('<h1>Add Link</h1><br><label>URL</label><input type="text" placeholder="http://www.example.com" id="linkURL" autofocus><label>Text</label><input type="text" placeholder="Link Text" id="linkText" value="'+currentlySelected+'"><a href="#" id="link-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="link-ok" class="jot-button">OK</a>');
+	
 	 $("#linkUrl").focus();
 });
 $(document.body).on("click", "#link-ok", function(event) {
@@ -422,7 +442,7 @@ $(document.body).on("click", "#link-ok", function(event) {
 	$('.jot-modal').remove();
 });
 $(document.body).on("click", "#link-cancel", function(event) {
-	$('.jot-modal').remove();
+	closeModal();
 	$('.linkreplace').contents().unwrap();
 });
 
@@ -450,10 +470,10 @@ $(document.body).on("click", "#anchor-ok", function(event) {
 	var aName = $('#anchorName').val(),
 		aCombined = '<div id="'+aName+'" class="anchor" contenteditable="false"></div>';
 	$('.anchorreplace').replaceWith(aCombined);
-	$('.jot-modal').remove();
+	closeModal();
 });
 $(document.body).on("click", "#anchor-cancel", function(event) {
-	$('.jot-modal').remove();
+	closeModal();
 	$('.anchorreplace').contents().unwrap();
 });
 /*
@@ -465,11 +485,61 @@ d888888b .88b  d88.  d888b
 Y888888P YP  YP  YP  Y888P
 */
 document.execCommand("enableObjectResizing", false, false);
+
 $(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','imagereplace','', editorId);
-	startModal('<h1>Add Image</h1><br><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="anchor-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="anchor-ok" class="jot-button">OK</a>');
+	startModal('<h1>Add Image</h1><br><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-ok" class="jot-button">OK</a>');
+});
+
+/* Right click Image */
+$("#"+uniqueId+" .jot img").bind("contextmenu",function(event){
+	removeJotContext();
+   $(this).attr('id','jot-selected-img');
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-image.svg">Properties</a></div>')
+        .appendTo("#"+uniqueId+"")
+        .css({
+        top: event.pageY + "px",
+        left: event.pageX + "px"
+    });
+   return false;
+}); 
+
+/* Left */
+$(document.body).on("click", "#"+uniqueId+" .jot-set-img-left", function(event) {
+	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-left');
+	$('#jot-selected-img').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-img-right", function(event) {
+	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-right');
+	$('#jot-selected-img').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-img-center", function(event) {
+	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-center');
+	$('#jot-selected-img').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-img-inline", function(event) {
+	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-inline');
+	$('#jot-selected-img').attr('id','');
+});
+/* Properties */
+$(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event) {
+	var currentImgsize = $('#jot-selected-img').attr('width'),
+		currentImgalt = $('#jot-selected-img').attr('alt');
+	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
+	 $("#linkUrl").focus();
+});
+/* Update Properties */
+$(document.body).on("click", "#img-update-ok", function(event) {
+	var updateImgwidth = $('#jot-img-width').val(),
+		updateImgalt = $('#jot-img-alt').val();
+	$('#jot-selected-img').attr('width',updateImgwidth).attr('alt',updateImgalt);
+	closeModal();
+});
+$(document.body).on("click", "#img-update-cancel", function(event) {
+	closeModal();
+	$('#jot-selected-img').attr('id','');
 });
 /*
 d888888b  .d8b.  d8888b. db      d88888b 
@@ -483,7 +553,7 @@ $(document.body).on("click", "#"+uniqueId+" .addTable", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','tablereplace','', editorId);
-	startModal('<h1>Add Table</h1><br><div class="jot-col-wrap"><div class="jot-col-50"><label>Rows</label><input type="number" min="1" step="1" id="rows" autofocus><label>Columns</label><input type="number" min="1" step="1" id="columns"></div><div class="jot-col-50"><label>Table Width</label><input type="text" value="100%" id="tWidth"></div></div><a href="#" id="table-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="table-ok" class="jot-button">OK</a>');
+	startModal('<h1>Add Table</h1><br><div class="jot-col-wrap"><div class="jot-col-50"><label>Rows</label><input type="number" min="1" step="1" id="rows" autofocus><label>Columns</label><input type="number" min="1" step="1" id="columns"></div><div class="jot-col-50"><label>Table Width</label><input type="text" value="100%" placeholder="px or %" id="tWidth"></div></div><a href="#" id="table-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="table-ok" class="jot-button">OK</a>');
 	 $("#linkUrl").focus();
 });
 $(document.body).on("click", "#table-ok", function(event) {
@@ -502,19 +572,53 @@ $(document.body).on("click", "#table-ok", function(event) {
 	table += '</tbody></table>';
 
 	$('.tablereplace').replaceWith(table);
-	$('.jot-modal').remove();
+	closeModal();
 });
+
+/* Cancel Adding A Table*/
 $(document.body).on("click", "#table-cancel", function(event) {
 	$('.jot-modal').remove();
 	$('.tablereplace').contents().unwrap();
 });
 
-$('.jot td').bind("contextmenu",function(e){
-   $(this).attr('id','selectedCell');
-   
+/* Right click table cell */
+$("#"+uniqueId+" .jot td").bind("contextmenu",function(event){
+	removeJotContext();
+   $(this).attr('id','jot-selected-cell');
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Cell Properties</div><a href="#"><img src="jot-icons/ico-insert-row-before.svg">Insert Row Before</a><a href="#" class="insert-row-after"><img src="jot-icons/ico-insert-row-after.svg">Insert Row After</a><a href="#"><img src="jot-icons/ico-remove-row.svg">Delete Row</a><a href="#"><img src="jot-icons/ico-insert-col-before.svg">Insert Column Before</a><a href="#"><img src="jot-icons/ico-insert-col-after.svg">Insert Column After</a><a href="#"><img src="jot-icons/ico-remove-col.svg">Delete Column</a><div class="jot-context-heading">Table Properties</div><a href="#"><img src="jot-icons/ico-times.svg">Delete Table</a><a href="#"><img src="jot-icons/ico-sliders.svg">Table Settings</a></div>')
+        .appendTo("#"+uniqueId+"")
+        .css({
+        top: event.pageY + "px",
+        left: event.pageX + "px"
+    });
    return false;
 }); 
 
+// Add Row After
+$(document.body).on("click", "#"+uniqueId+" .insert-row-after", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var whichOne = $('#selectedCell').parent().index(),
+		cols = $('#selectedTable tr:first-of-type td').length;
+
+	$('<tr id="selectedRow"></tr>').insertAfter("#selectedTable tbody tr:eq(" + whichOne + ")");
+	for (var i = 0; i < cols; i++) {
+		$('#selectedRow').append('<td>&nbsp;</td>');
+	}
+	$('#selectedRow, #selected, #selectedTable').removeAttr('id');
+	event.preventDefault();
+});
+
+
+// Remove the menu
+$(document).bind("click", function (event) {
+    removeJotContext();
+    event.preventDefault();
+});
+
+function removeJotContext(){
+	$('.jot-context-menu').remove();
+    $('#jot-selected-cell').attr('id','');
+}
 
 		}
 	});
