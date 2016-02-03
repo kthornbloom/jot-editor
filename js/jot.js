@@ -439,7 +439,7 @@ $(document.body).on("click", "#link-ok", function(event) {
 		lText = $('#linkText').val(),
 		lCombined = '<a href="'+lUrl+'">'+lText+'</a>';
 	$('.linkreplace').replaceWith(lCombined);
-	$('.jot-modal').remove();
+	closeModal();
 });
 $(document.body).on("click", "#link-cancel", function(event) {
 	closeModal();
@@ -528,7 +528,6 @@ $(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event
 	var currentImgsize = $('#jot-selected-img').attr('width'),
 		currentImgalt = $('#jot-selected-img').attr('alt');
 	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
-	 $("#linkUrl").focus();
 });
 /* Update Properties */
 $(document.body).on("click", "#img-update-ok", function(event) {
@@ -577,7 +576,7 @@ $(document.body).on("click", "#table-ok", function(event) {
 
 /* Cancel Adding A Table*/
 $(document.body).on("click", "#table-cancel", function(event) {
-	$('.jot-modal').remove();
+	closeModal();
 	$('.tablereplace').contents().unwrap();
 });
 
@@ -585,7 +584,7 @@ $(document.body).on("click", "#table-cancel", function(event) {
 $("#"+uniqueId+" .jot td").bind("contextmenu",function(event){
 	removeJotContext();
    $(this).attr('id','jot-selected-cell');
-   $('<div class="jot-context-menu"><div class="jot-context-heading">Cell Properties</div><a href="#"><img src="jot-icons/ico-insert-row-before.svg">Insert Row Before</a><a href="#" class="insert-row-after"><img src="jot-icons/ico-insert-row-after.svg">Insert Row After</a><a href="#"><img src="jot-icons/ico-remove-row.svg">Delete Row</a><a href="#"><img src="jot-icons/ico-insert-col-before.svg">Insert Column Before</a><a href="#"><img src="jot-icons/ico-insert-col-after.svg">Insert Column After</a><a href="#"><img src="jot-icons/ico-remove-col.svg">Delete Column</a><div class="jot-context-heading">Table Properties</div><a href="#"><img src="jot-icons/ico-times.svg">Delete Table</a><a href="#"><img src="jot-icons/ico-sliders.svg">Table Settings</a></div>')
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Cell Properties</div><a href="#"><img src="jot-icons/ico-insert-row-before.svg" class="insert-row-before">Insert Row Before</a><a href="#" class="insert-row-after"><img src="jot-icons/ico-insert-row-after.svg">Insert Row After</a><a href="#" class="remove-row"><img src="jot-icons/ico-remove-row.svg">Delete Row</a><a href="#" class="insert-col-before"><img src="jot-icons/ico-insert-col-before.svg">Insert Column Before</a><a href="#" class="insert-col-after"><img src="jot-icons/ico-insert-col-after.svg">Insert Column After</a><a href="#" class="remove-col"><img src="jot-icons/ico-remove-col.svg">Delete Column</a><div class="jot-context-heading">Table Properties</div><a href="#" class="remove-table"><img src="jot-icons/ico-times.svg">Delete Table</a><a href="#" class="table-settings"><img src="jot-icons/ico-sliders.svg">Table Settings</a></div>')
         .appendTo("#"+uniqueId+"")
         .css({
         top: event.pageY + "px",
@@ -597,17 +596,108 @@ $("#"+uniqueId+" .jot td").bind("contextmenu",function(event){
 // Add Row After
 $(document.body).on("click", "#"+uniqueId+" .insert-row-after", function(event) {
 	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
-	var whichOne = $('#selectedCell').parent().index(),
+	var whichOne = $('#jot-selected-cell').parent().index(),
 		cols = $('#selectedTable tr:first-of-type td').length;
 
 	$('<tr id="selectedRow"></tr>').insertAfter("#selectedTable tbody tr:eq(" + whichOne + ")");
 	for (var i = 0; i < cols; i++) {
 		$('#selectedRow').append('<td>&nbsp;</td>');
 	}
-	$('#selectedRow, #selected, #selectedTable').removeAttr('id');
+	$('#selectedRow, #jot-selected-cell, #selectedTable').removeAttr('id');
 	event.preventDefault();
 });
 
+// Add Row Before
+$(document.body).on("click", "#"+uniqueId+" .insert-row-before", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var whichOne = $('#jot-selected-cell').parent().index(),
+		cols = $('#selectedTable tr:first-of-type td').length;
+
+	$('<tr id="selectedRow"></tr>').insertBefore("#selectedTable tbody tr:eq(" + whichOne + ")");
+	for (var i = 0; i < cols; i++) {
+		$('#selectedRow').append('<td>&nbsp;</td>');
+	}
+	$('#selectedRow, #jot-selected-cell, #selectedTable').removeAttr('id');
+	event.preventDefault();
+});
+
+// Delete Row
+$(document.body).on("click", "#"+uniqueId+" .remove-row", function(event) {
+	if ($('#jot-selected-cell').parents('thead').length ){
+		$('#jot-selected-cell').parents('thead').fadeOut(500, function() {
+			$(this).remove();
+		});
+	} else {
+		$('#jot-selected-cell').parents('tr').fadeOut(500, function() {
+			$(this).remove();
+		});
+	}
+	event.preventDefault();
+});
+
+// Add Column After
+$(document.body).on("click", "#"+uniqueId+" .insert-col-after", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var whichOne = $('#jot-selected-cell').index(),
+		rows = $('#selectedTable tr').length;
+
+	$('#selectedTable tr').each(function() {
+		$('<td>&nbsp;</td>').insertAfter($(this).find('td:eq(' + whichOne + ')'));
+		$('<th>&nbsp;</th>').insertAfter($(this).find('th:eq(' + whichOne + ')'));
+	});
+
+	$('#selected, #selectedTable').removeAttr('id');
+	event.preventDefault();
+});
+
+// Add Column Before
+$(document.body).on("click", "#"+uniqueId+" .insert-col-before", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var whichOne = $('#jot-selected-cell').index(),
+		rows = $('#selectedTable tr').length;
+
+	$('#selectedTable tr').each(function() {
+		$('<td>&nbsp;</td>').insertBefore($(this).find('td:eq(' + whichOne + ')'));
+		$('<th>&nbsp;</th>').insertBefore($(this).find('th:eq(' + whichOne + ')'));
+	});
+
+	$('#selected, #selectedTable').removeAttr('id');
+	event.preventDefault();
+});
+
+// Delete Col
+$(document.body).on("click", "#"+uniqueId+" .remove-col", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var whichOne = $('#jot-selected-cell').index();
+	$('#selectedTable tr').find("td:eq(" + whichOne + ")").fadeOut(500, function() {
+		$(this).remove();
+	});
+	$('#selectedTable thead tr').find("th:eq(" + whichOne + ")").fadeOut(500, function() {
+		$(this).remove();
+	});
+	$('#selected, #selectedTable').removeAttr('id');
+	event.preventDefault();
+});
+
+// Delete Entire Table
+$(document.body).on("click", "#"+uniqueId+" .remove-table", function(event) {
+	var r = confirm("Are you sure you want to delete the whole table?");
+	if (r == true) {
+		$('#jot-selected-cell').parents('table').fadeOut(500, function() {
+			$(this).remove();
+		});
+	}
+	event.preventDefault();
+});
+
+// Table Properties
+$(document.body).on("click", "#"+uniqueId+" .table-settings", function(event) {
+	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	var currentTableWidth = $('#selectedTable').attr('width');
+	startModal('<h1>Table Properties</h1><br><label>Max Width</label><input type="text" value="'+currentTableWidth+'" placeholder="px or %" id="jot-table-width"><a href="#" id="table-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="table-update-ok" class="jot-button">OK</a>');
+	 $("#linkUrl").focus();
+	event.preventDefault();
+});
 
 // Remove the menu
 $(document).bind("click", function (event) {
