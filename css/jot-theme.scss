@@ -1,5 +1,11 @@
 $highlight : #A9D1FF;
-
+@keyframes spin {
+	0%   { transform:rotate(0deg);  }
+	100% { transform:rotate(360deg);}
+}
+.jot-spin {
+	animation:spin 1s infinite; 
+}
 .jot {
 	padding:30px;
 	background: #fff;
@@ -193,7 +199,11 @@ $highlight : #A9D1FF;
 	}
 	input[type="file"] {
 		display: block;
-		width:100%;
+		width: 100%;
+		background: #eee;
+		padding: 5px;
+		box-sizing: border-box;
+		border-radius: 2px;
 	}
 	.jot-button-cancel {
 		padding:10px;

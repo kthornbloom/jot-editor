@@ -7,7 +7,7 @@ Jot by Kevin Thornbloom is licensed under a Creative Commons Attribution-ShareAl
 		joteditor: function(options) {
 			var defaults = {
 				effectDuration: 5000,
-				toolbar: ["bold","italic","strike","underline","clearFormat","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","table","hr","divider","code"]
+				toolbar: ["bold","italic","strike","underline","clearFormat","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","table","hr","divider","code"]
 			}
 /*
 d8888b. db    db d888888b db      d8888b. 
@@ -39,6 +39,7 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				toolUnlink = "<a href='#' title='Remove Link' class='removeLink'><img src='jot-icons/ico-unlink.svg'></a>",
 				toolAnchor = "<a href='#' title='Anchor' class='addAnchor'><img src='jot-icons/ico-anchor.svg'></a>",
 				toolImage = "<a href='#' title='Insert Image' class='addImage'><img src='jot-icons/ico-image.svg'></a>",
+				toolDocument = "<a href='#' title='Insert Document Link' class='addDocument'><img src='jot-icons/ico-file-o.svg'></a>",
 				toolTable = "<a href='#' title='Insert Table' class='addTable'><img src='jot-icons/ico-table.svg'></a>",
 				toolHr = "<a href='#' title='Insert Horizontal Line' onclick='document.execCommand(&#34;insertHorizontalRule&#34;, false, null);''><img src='jot-icons/ico-hr.svg'></a>",
 				toolCode = "<a href='#' title='View Source'><img src='jot-icons/ico-code.svg'></a>",
@@ -46,7 +47,7 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 			
 			$(this).attr('contenteditable','true').wrap('<div class="jot-wrap" id="'+uniqueId+'"></div>');
 			$(this).attr('id','');
-			$(this).parent().prepend('<div class="jot-toolbar"></div>');
+			$(this).parent().prepend('<div class="jot-toolbar"></div>').append('<textarea class="jot-result" hidden></textarea>');
 
 
 
@@ -100,6 +101,9 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 						break;
 					case "image":
 						$(this).parent().find('.jot-toolbar').append(toolImage);
+						break;
+					case "document":
+						$(this).parent().find('.jot-toolbar').append(toolDocument);
 						break;
 					case "table":
 						$(this).parent().find('.jot-toolbar').append(toolTable);
@@ -355,7 +359,15 @@ $('div[contenteditable]').keydown(function(e) {
 	}
 });
 
-// Modal Function
+/*
+.88b  d88.  .d88b.  d8888b.  .d8b.  db      
+88'YbdP`88 .8P  Y8. 88  `8D d8' `8b 88      
+88  88  88 88    88 88   88 88ooo88 88      
+88  88  88 88    88 88   88 88~~~88 88      
+88  88  88 `8b  d8' 88  .8D 88   88 88booo. 
+YP  YP  YP  `Y88P'  Y8888D' YP   YP Y88888P
+*/
+
 startModal = function(content) {
 	$('body').append('<div class="jot-modal"><div class="jot-modal-content">'+content+'</div></div>');
 	$('body').css({
@@ -392,6 +404,19 @@ closeModal = function(){
 	});
 }
 
+/*
+.d8888.  .d8b.  db    db d88888b 
+88'  YP d8' `8b 88    88 88'     
+`8bo.   88ooo88 Y8    8P 88ooooo 
+  `Y8b. 88~~~88 `8b  d8' 88~~~~~ 
+db   8D 88   88  `8bd8'  88.     
+`8888Y' YP   YP    YP    Y88888P
+*/
+
+$("#"+uniqueId+" .jot").bind('blur keyup paste copy cut mouseup', function () {
+	var getHtml = $(this).html();
+	$("#"+uniqueId+" .jot-result").html(getHtml);
+})
 
 /*
 db      d888888b .d8888. d888888b 
@@ -463,7 +488,7 @@ $(document.body).on("click", "#"+uniqueId+" .addAnchor", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','anchorreplace','', editorId);
-	startModal('<h1>Add Anchor</h1><br><label>Anchor Name</label><input type="text" id="anchorName" autofocus><a href="#" id="anchor-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="anchor-ok" class="jot-button">OK</a>');
+	startModal('<h1>Add Anchor</h1><br><label>Unique Anchor Name</label><input type="text" id="anchorName" autofocus><a href="#" id="anchor-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="anchor-ok" class="jot-button">OK</a>');
 	 $("#anchorName").focus();
 });
 $(document.body).on("click", "#anchor-ok", function(event) {
@@ -476,6 +501,19 @@ $(document.body).on("click", "#anchor-cancel", function(event) {
 	closeModal();
 	$('.anchorreplace').contents().unwrap();
 });
+/* Right click anchor */
+$(document).on('contextmenu', '#'+uniqueId+' .jot .anchor', function (event) {
+	event.preventDefault();
+	removeJotContext();
+	$(this).addClass('jot-selected-anchor');
+	$('<div class="jot-context-menu"><a href="#" class="remove-anchor"><img src="jot-icons/ico-times.svg">Delete Anchor</a><a href="#" class="anchor-settings"><img src="jot-icons/ico-sliders.svg">Anchor Settings</a></div>')
+		.appendTo("#"+uniqueId+"")
+		.css({
+		top: (event.pageY - 13) + "px",
+		left: (event.pageX + 7) + "px"
+	});
+	return false;
+}); 
 /*
 d888888b .88b  d88.  d888b  
   `88'   88'YbdP`88 88' Y8b 
@@ -490,19 +528,61 @@ $(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','imagereplace','', editorId);
-	startModal('<h1>Add Image</h1><br><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-ok" class="jot-button">OK</a>');
+	startModal('<h1>Add Image</h1><br><form id="image-insert-form"><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-ok" class="jot-button" onclick="document.getElementById("img-insert-form").submit();">OK</a></form>');
+
+	$("form#image-insert-form").submit(function(event){
+		// Disable the default form submission
+		event.preventDefault();
+		// Show spinner
+		$('#img-ok').remove();
+		$('.jot-modal-content').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner.svg"></a>');
+		// Get form data
+		formData = new FormData($(this)[0]);
+		// Upload
+		var request = $.ajax({
+			url: 'upload.php',
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			dataType: 'json',
+		});
+		// After Upload
+		request.done(function(returndata){
+			// If there's a problem.
+			if(returndata.error_msg!=''){
+				//show error message
+				alert("Sorry, the file did not upload correctly.");
+			}
+			else {
+				//put together image
+				uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
+				// Insert Image
+				$('#imagereplace').replaceWith(uploaded_tag);
+				// Finish up
+				closeModal();
+				//save page
+				savePage();
+			}
+		});
+	});
+});
+
+$(document.body).on("click", "#img-cancel", function(event) {
+	closeModal();
 });
 
 /* Right click Image */
-$("#"+uniqueId+" .jot img").bind("contextmenu",function(event){
+$(document).on('contextmenu', '#'+uniqueId+' .jot img', function (event) {
+	event.preventDefault();
 	removeJotContext();
    $(this).attr('id','jot-selected-img');
    $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-image.svg">Properties</a></div>')
-        .appendTo("#"+uniqueId+"")
-        .css({
-        top: event.pageY + "px",
-        left: event.pageX + "px"
-    });
+		.appendTo("#"+uniqueId+"")
+		.css({
+		top: (event.pageY - 13) + "px",
+		left: (event.pageX + 7) + "px"
+	});
    return false;
 }); 
 
@@ -529,7 +609,7 @@ $(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event
 		currentImgalt = $('#jot-selected-img').attr('alt');
 	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
 });
-/* Update Properties */
+/* Update Image Properties */
 $(document.body).on("click", "#img-update-ok", function(event) {
 	var updateImgwidth = $('#jot-img-width').val(),
 		updateImgalt = $('#jot-img-alt').val();
@@ -540,6 +620,23 @@ $(document.body).on("click", "#img-update-cancel", function(event) {
 	closeModal();
 	$('#jot-selected-img').attr('id','');
 });
+
+/*
+d8888b.  .d88b.   .o88b. .d8888. 
+88  `8D .8P  Y8. d8P  Y8 88'  YP 
+88   88 88    88 8P      `8bo.   
+88   88 88    88 8b        `Y8b. 
+88  .8D `8b  d8' Y8b  d8 db   8D 
+Y8888D'  `Y88P'   `Y88P' `8888Y'
+*/
+
+$(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
+	var currentlySelected = getSelectionHtml(),
+		editorId = $(this).parents('.jot-wrap').attr('id');
+	wrapElement('span','','docreplace','', editorId);
+	startModal('<h1>Add Document</h1><br><form id="image-insert-form"><label>Select Document</label><input type="file" id="docbrowse"><label>Image Description</label><input type="text" id="docalt" autofocus><a href="#" id="doc-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="doc-ok" class="jot-button" onclick="document.getElementById("doc-insert-form").submit();">OK</a></form>');
+});
+
 /*
 d888888b  .d8b.  d8888b. db      d88888b 
 `~~88~~' d8' `8b 88  `8D 88      88'     
@@ -581,43 +678,45 @@ $(document.body).on("click", "#table-cancel", function(event) {
 });
 
 /* Right click table cell */
-$("#"+uniqueId+" .jot td").bind("contextmenu",function(event){
+$(document).on('contextmenu', '#'+uniqueId+' .jot td', function (event) {
+	event.preventDefault();
 	removeJotContext();
-   $(this).attr('id','jot-selected-cell');
-   $('<div class="jot-context-menu"><div class="jot-context-heading">Cell Properties</div><a href="#"><img src="jot-icons/ico-insert-row-before.svg" class="insert-row-before">Insert Row Before</a><a href="#" class="insert-row-after"><img src="jot-icons/ico-insert-row-after.svg">Insert Row After</a><a href="#" class="remove-row"><img src="jot-icons/ico-remove-row.svg">Delete Row</a><a href="#" class="insert-col-before"><img src="jot-icons/ico-insert-col-before.svg">Insert Column Before</a><a href="#" class="insert-col-after"><img src="jot-icons/ico-insert-col-after.svg">Insert Column After</a><a href="#" class="remove-col"><img src="jot-icons/ico-remove-col.svg">Delete Column</a><div class="jot-context-heading">Table Properties</div><a href="#" class="remove-table"><img src="jot-icons/ico-times.svg">Delete Table</a><a href="#" class="table-settings"><img src="jot-icons/ico-sliders.svg">Table Settings</a></div>')
-        .appendTo("#"+uniqueId+"")
-        .css({
-        top: event.pageY + "px",
-        left: event.pageX + "px"
-    });
-   return false;
+	$(this).attr('id','jot-selected-cell');
+	$('<div class="jot-context-menu"><div class="jot-context-heading">Cell Properties</div><a href="#" class="insert-row-before"><img src="jot-icons/ico-insert-row-before.svg">Insert Row Before</a><a href="#" class="insert-row-after"><img src="jot-icons/ico-insert-row-after.svg">Insert Row After</a><a href="#" class="remove-row"><img src="jot-icons/ico-remove-row.svg">Delete Row</a><a href="#" class="insert-col-before"><img src="jot-icons/ico-insert-col-before.svg">Insert Column Before</a><a href="#" class="insert-col-after"><img src="jot-icons/ico-insert-col-after.svg">Insert Column After</a><a href="#" class="remove-col"><img src="jot-icons/ico-remove-col.svg">Delete Column</a><div class="jot-context-heading">Table Properties</div><a href="#" class="remove-table"><img src="jot-icons/ico-times.svg">Delete Table</a><a href="#" class="table-settings"><img src="jot-icons/ico-sliders.svg">Table Settings</a></div>')
+		.appendTo("#"+uniqueId+"")
+		.css({
+		top: (event.pageY - 13) + "px",
+		left: (event.pageX + 7) + "px"
+	});
+	return false;
 }); 
 
 // Add Row After
 $(document.body).on("click", "#"+uniqueId+" .insert-row-after", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
 	var whichOne = $('#jot-selected-cell').parent().index(),
-		cols = $('#selectedTable tr:first-of-type td').length;
+		cols = $('#jot-selected-table tr:first-of-type td').length;
 
-	$('<tr id="selectedRow"></tr>').insertAfter("#selectedTable tbody tr:eq(" + whichOne + ")");
+	$('<tr id="selectedRow"></tr>').insertAfter("#jot-selected-table tbody tr:eq(" + whichOne + ")");
 	for (var i = 0; i < cols; i++) {
 		$('#selectedRow').append('<td>&nbsp;</td>');
 	}
-	$('#selectedRow, #jot-selected-cell, #selectedTable').removeAttr('id');
+	$('#selectedRow, #jot-selected-cell, #jot-selected-table').removeAttr('id');
 	event.preventDefault();
 });
 
 // Add Row Before
 $(document.body).on("click", "#"+uniqueId+" .insert-row-before", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	console.log('test');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
 	var whichOne = $('#jot-selected-cell').parent().index(),
-		cols = $('#selectedTable tr:first-of-type td').length;
+		cols = $('#jot-selected-table tr:first-of-type td').length;
 
-	$('<tr id="selectedRow"></tr>').insertBefore("#selectedTable tbody tr:eq(" + whichOne + ")");
+	$('<tr id="selectedRow"></tr>').insertBefore("#jot-selected-table tbody tr:eq(" + whichOne + ")");
 	for (var i = 0; i < cols; i++) {
 		$('#selectedRow').append('<td>&nbsp;</td>');
 	}
-	$('#selectedRow, #jot-selected-cell, #selectedTable').removeAttr('id');
+	$('#selectedRow, #jot-selected-cell, #jot-selected-table').removeAttr('id');
 	event.preventDefault();
 });
 
@@ -637,45 +736,45 @@ $(document.body).on("click", "#"+uniqueId+" .remove-row", function(event) {
 
 // Add Column After
 $(document.body).on("click", "#"+uniqueId+" .insert-col-after", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
 	var whichOne = $('#jot-selected-cell').index(),
-		rows = $('#selectedTable tr').length;
+		rows = $('#jot-selected-table tr').length;
 
-	$('#selectedTable tr').each(function() {
+	$('#jot-selected-table tr').each(function() {
 		$('<td>&nbsp;</td>').insertAfter($(this).find('td:eq(' + whichOne + ')'));
 		$('<th>&nbsp;</th>').insertAfter($(this).find('th:eq(' + whichOne + ')'));
 	});
 
-	$('#selected, #selectedTable').removeAttr('id');
+	$('#selected, #jot-selected-table').removeAttr('id');
 	event.preventDefault();
 });
 
 // Add Column Before
 $(document.body).on("click", "#"+uniqueId+" .insert-col-before", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
 	var whichOne = $('#jot-selected-cell').index(),
-		rows = $('#selectedTable tr').length;
+		rows = $('#jot-selected-table tr').length;
 
-	$('#selectedTable tr').each(function() {
+	$('#jot-selected-table tr').each(function() {
 		$('<td>&nbsp;</td>').insertBefore($(this).find('td:eq(' + whichOne + ')'));
 		$('<th>&nbsp;</th>').insertBefore($(this).find('th:eq(' + whichOne + ')'));
 	});
 
-	$('#selected, #selectedTable').removeAttr('id');
+	$('#selected, #jot-selected-table').removeAttr('id');
 	event.preventDefault();
 });
 
 // Delete Col
 $(document.body).on("click", "#"+uniqueId+" .remove-col", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
 	var whichOne = $('#jot-selected-cell').index();
-	$('#selectedTable tr').find("td:eq(" + whichOne + ")").fadeOut(500, function() {
+	$('#jot-selected-table tr').find("td:eq(" + whichOne + ")").fadeOut(500, function() {
 		$(this).remove();
 	});
-	$('#selectedTable thead tr').find("th:eq(" + whichOne + ")").fadeOut(500, function() {
+	$('#jot-selected-table thead tr').find("th:eq(" + whichOne + ")").fadeOut(500, function() {
 		$(this).remove();
 	});
-	$('#selected, #selectedTable').removeAttr('id');
+	$('#selected, #jot-selected-table').removeAttr('id');
 	event.preventDefault();
 });
 
@@ -692,22 +791,34 @@ $(document.body).on("click", "#"+uniqueId+" .remove-table", function(event) {
 
 // Table Properties
 $(document.body).on("click", "#"+uniqueId+" .table-settings", function(event) {
-	$('#jot-selected-cell').parents('table').attr('id', 'selectedTable');
-	var currentTableWidth = $('#selectedTable').attr('width');
+	$('#jot-selected-cell').parents('table').attr('id', 'jot-selected-table');
+	var currentTableWidth = $('#jot-selected-table').attr('width');
 	startModal('<h1>Table Properties</h1><br><label>Max Width</label><input type="text" value="'+currentTableWidth+'" placeholder="px or %" id="jot-table-width"><a href="#" id="table-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="table-update-ok" class="jot-button">OK</a>');
 	 $("#linkUrl").focus();
 	event.preventDefault();
 });
 
+/* Update Properties */
+$(document.body).on("click", "#table-update-ok", function(event) {
+	var updateTablewidth = $('#jot-table-width').val();
+	$('#jot-selected-table').attr('width',updateTablewidth);
+	closeModal();
+});
+
+/* Cancel Update Properties */
+$(document.body).on("click", "#table-update-cancel", function(event) {
+	closeModal();
+});
+
 // Remove the menu
 $(document).bind("click", function (event) {
-    removeJotContext();
-    event.preventDefault();
+	removeJotContext();
+	event.preventDefault();
 });
 
 function removeJotContext(){
 	$('.jot-context-menu').remove();
-    $('#jot-selected-cell').attr('id','');
+	$('#jot-selected-cell').attr('id','');
 }
 
 		}
