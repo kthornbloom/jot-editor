@@ -1,10 +1,11 @@
 $highlight : #A9D1FF;
 @keyframes spin {
-	0%   { transform:rotate(0deg);  }
-	100% { transform:rotate(360deg);}
+	0%   { transform:rotate(0deg) scale(1.1);  }
+	50% { transform:rotate(360deg) scale(.5);}
+	100% { transform:rotate(720deg) scale(1.1);}
 }
 .jot-spin {
-	animation:spin 1s infinite; 
+	animation:spin 2s linear infinite; 
 }
 .jot {
 	padding:30px;
@@ -173,6 +174,7 @@ $highlight : #A9D1FF;
 	transform:scale(1.4);
 	opacity: 0;
 	transition-duration:.5s;
+	z-index:100;
 }
 
 .jot-modal-content {
@@ -210,7 +212,10 @@ $highlight : #A9D1FF;
 		border:1px solid #ccc;
 		color:#ccc;
 		display: inline-block;
+		box-sizing:border-box;
 		border-radius:4px;
+		font-size:16px;
+		line-height: 24px;
 		transition:.2s;
 		min-width: 75px;
 		text-align: center;
@@ -225,12 +230,23 @@ $highlight : #A9D1FF;
 		border:1px solid #66B083;
 		background:#66B083;
 		color:#fff;
+		font-size:16px;
+		line-height: 24px;
+		box-sizing:border-box;
 		display: inline-block;
 		border-radius:4px;
 		float:right;
 		transition:.2s;
 		min-width: 75px;
 		text-align: center;
+		img {
+			width: 18px;
+			height: 18px;
+			vertical-align: text-bottom;
+		}
+		svg {
+			fill: #fff;
+		}
 	}
 	.jot-button:hover {
 		background:#70C494;

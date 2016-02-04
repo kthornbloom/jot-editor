@@ -132,11 +132,11 @@ $('[contenteditable]').on('paste', function(e) {
 	e.preventDefault();
 	var text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('Paste something..');
 	document.execCommand('insertText', false, text);
-	console.log('paste function ran');
+	//console.log('paste function ran');
 });
 
 function getRangeSelectedNodes(range, includePartiallySelectedContainers) {
-	console.log('getRangeSelectedNodes function ran');
+	//console.log('getRangeSelectedNodes function ran');
 	var node = range.startContainer;
 	var endNode = range.endContainer;
 	var rangeNodes = [];
@@ -171,7 +171,7 @@ function getRangeSelectedNodes(range, includePartiallySelectedContainers) {
 }
 
 function getSelectedNodes() {
-	console.log('getSelectedNodes function ran');
+	//console.log('getSelectedNodes function ran');
 	var nodes = [];
 	if (window.getSelection) {
 		var sel = window.getSelection();
@@ -183,7 +183,7 @@ function getSelectedNodes() {
 }
 
 function replaceWithOwnChildren(el) {
-	console.log('replaceWithOwnChildren function ran');
+	//console.log('replaceWithOwnChildren function ran');
 	var parent = el.parentNode;
 	while (el.hasChildNodes()) {
 		parent.insertBefore(el.firstChild, el);
@@ -192,7 +192,7 @@ function replaceWithOwnChildren(el) {
 }
 
 function removeSelectedElements(tagNames) {
-	console.log('removeSelectedElements function ran');
+	//console.log('removeSelectedElements function ran');
 	var tagNamesArray = tagNames.toLowerCase().split(",");
 	getSelectedNodes().forEach(function(node) {
 		if (node.nodeType == 1 &&
@@ -205,7 +205,7 @@ function removeSelectedElements(tagNames) {
 
 /*find next node */
 function nextNode(node) {
-	console.log('nextNode function ran');
+	//console.log('nextNode function ran');
 	if (node.hasChildNodes()) {
 		return node.firstChild;
 	} else {
@@ -227,7 +227,7 @@ $(document.body).on("click", ".removeFormatting", function(event) {
 
 // Paste At Caret Function	
 function pasteHtmlAtCaret(html, selector) {
-	console.log('pasteHtmlAtCaret function ran');
+	//console.log('pasteHtmlAtCaret function ran');
 	var sel, range, parent, node = null;
 
 	if (document.selection) {
@@ -274,7 +274,7 @@ function pasteHtmlAtCaret(html, selector) {
 }
 // Is within element? function
 function isSelectionInsideElement(tagName) {
-	console.log('isSelectionInsideElement function ran');
+	//console.log('isSelectionInsideElement function ran');
 	var sel, containerNode;
 	tagName = tagName.toUpperCase();
 	if (window.getSelection) {
@@ -296,7 +296,7 @@ function isSelectionInsideElement(tagName) {
 
 // Return selected HTML
 function getSelectionHtml() {
-	console.log('getSelectionHtml function ran');
+	//console.log('getSelectionHtml function ran');
 	var html = "";
 	if (typeof window.getSelection != "undefined") {
 		var sel = window.getSelection();
@@ -317,7 +317,7 @@ function getSelectionHtml() {
 
 // Wrap Selection
 wrapElement = function(elem, parentElem, elemClass, parentClass, editorId) {
-	console.log('wrapElement function ran');
+	//console.log('wrapElement function ran');
 	var element = elem
 	sel = window.getSelection(),
 	isAlready = isSelectionInsideElement(elem);
@@ -338,10 +338,8 @@ wrapElement = function(elem, parentElem, elemClass, parentClass, editorId) {
 		removeSelectedElements("h1,h2,h3,h4,h5,h6,blockquote");
 		if (editorId) {
 			pasteHtmlAtCaret(finalCode, '#'+editorId+'');
-			console.log('1');
 		} else {
 			pasteHtmlAtCaret(finalCode, '#'+uniqueId+'');
-			console.log('2');
 		}
 		$('#'+uniqueId+'').attr('rel', '');
 	}
@@ -349,7 +347,7 @@ wrapElement = function(elem, parentElem, elemClass, parentClass, editorId) {
 
 // Insert BR on enter
 $('div[contenteditable]').keydown(function(e) {
-	console.log('insert BR on enter function ran');
+	//console.log('insert BR on enter function ran');
 	if (e.keyCode === 13) {
 		//document.execCommand('insertHTML', false, '<br>');
 		if (window.getSelection && !isSelectionInsideElement("li")) {
@@ -523,48 +521,47 @@ d888888b .88b  d88.  d888b
 Y888888P YP  YP  YP  Y888P
 */
 document.execCommand("enableObjectResizing", false, false);
-
 $(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
+
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','imagereplace','', editorId);
-	startModal('<h1>Add Image</h1><br><form id="image-insert-form"><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-ok" class="jot-button" onclick="document.getElementById("img-insert-form").submit();">OK</a></form>');
-
-	$("form#image-insert-form").submit(function(event){
-		// Disable the default form submission
-		event.preventDefault();
-		// Show spinner
-		$('#img-ok').remove();
-		$('.jot-modal-content').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner.svg"></a>');
-		// Get form data
-		formData = new FormData($(this)[0]);
-		// Upload
-		var request = $.ajax({
-			url: 'upload.php',
-			type: 'POST',
-			data: formData,
-			contentType: false,
-			processData: false,
-			dataType: 'json',
-		});
-		// After Upload
-		request.done(function(returndata){
-			// If there's a problem.
-			if(returndata.error_msg!=''){
-				//show error message
-				alert("Sorry, the file did not upload correctly.");
-			}
-			else {
-				//put together image
-				uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
-				// Insert Image
-				$('#imagereplace').replaceWith(uploaded_tag);
-				// Finish up
-				closeModal();
-				//save page
-				savePage();
-			}
-		});
+	startModal('<h1>Add Image</h1><br><form id="image-insert-form"><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><input type="submit" class="jot-button" id="img-ok" value="Ok"></form>');
+});
+$(document).on('submit','form#image-insert-form',function(event){
+	event.preventDefault();
+	event.stopImmediatePropagation();
+	// Show spinner
+	$('#img-ok').remove();
+	$('#image-insert-form').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
+	// Get form data
+	formData = new FormData($(this)[0]);
+	// Upload
+	var request = $.ajax({
+		url: 'upload.php',
+		type: 'POST',
+		data: formData,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+	});
+	// After Upload
+	request.done(function(returndata){
+		// If there's a problem.
+		if(returndata.error_msg!=''){
+			//show error message
+			alert("Sorry, the file did not upload correctly.");
+		}
+		else {
+			//put together image
+			uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
+			// Insert Image
+			$('#imagereplace').replaceWith(uploaded_tag);
+			// Finish up
+			closeModal();
+			//save page
+			savePage();
+		}
 	});
 });
 
@@ -630,11 +627,48 @@ d8888b.  .d88b.   .o88b. .d8888.
 Y8888D'  `Y88P'   `Y88P' `8888Y'
 */
 
-$(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
+$(document.body).on("click", "#"+uniqueId+" .addDocument", function(event) {
+
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','docreplace','', editorId);
-	startModal('<h1>Add Document</h1><br><form id="image-insert-form"><label>Select Document</label><input type="file" id="docbrowse"><label>Image Description</label><input type="text" id="docalt" autofocus><a href="#" id="doc-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="doc-ok" class="jot-button" onclick="document.getElementById("doc-insert-form").submit();">OK</a></form>');
+	startModal('<h1>Add Document Link</h1><br><form id="document-insert-form"><label>Select Document</label><input type="file" id="docbrowse"><label>Document Link Text</label><input type="text" id="doc-text" autofocus><a href="#" id="doc-cancel" class="jot-button-cancel">Cancel</a><input type="submit" class="jot-button" id="doc-ok" value="Ok"></form>');
+});
+$(document).on('submit','form#document-insert-form',function(event){
+	event.preventDefault();
+	event.stopImmediatePropagation();
+	// Show spinner
+	$('#doc-ok').remove();
+	$('#document-insert-form').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
+	// Get form data
+	formData = new FormData($(this)[0]);
+	// Upload
+	var request = $.ajax({
+		url: 'upload.php',
+		type: 'POST',
+		data: formData,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+	});
+	// After Upload
+	request.done(function(returndata){
+		// If there's a problem.
+		if(returndata.error_msg!=''){
+			//show error message
+			alert("Sorry, the file did not upload correctly.");
+		}
+		else {
+			//put together image
+			uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
+			// Insert Image
+			$('#imagereplace').replaceWith(uploaded_tag);
+			// Finish up
+			closeModal();
+			//save page
+			savePage();
+		}
+	});
 });
 
 /*
@@ -810,10 +844,13 @@ $(document.body).on("click", "#table-update-cancel", function(event) {
 	closeModal();
 });
 
+$(document.body).on("click", "#jot-toolbar a, .jot-modal a, .jot-modal button", function(event) {
+	event.preventDefault();
+});
+
 // Remove the menu
 $(document).bind("click", function (event) {
 	removeJotContext();
-	event.preventDefault();
 });
 
 function removeJotContext(){
