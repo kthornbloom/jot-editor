@@ -526,7 +526,7 @@ $(document.body).on("click", "#"+uniqueId+" .addImage", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','imagereplace','', editorId);
-	startModal('<h1>Add Image</h1><br><form id="image-insert-form"><label>Select Image</label><input type="file" id="imagebrowse"><label>Image Description</label><input type="text" id="imagealt" autofocus><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><input type="submit" class="jot-button" id="img-ok" value="Ok"></form>');
+	startModal('<h1>Add Image</h1><br><form id="image-insert-form" enctype="multipart/form-data" method="post"><label>Select Image</label><input type="file" name="image" id="imagebrowse"><label>Image Description</label><input type="text" name="description" id="imagealt" autofocus><input type="hidden" name="filetype" value="image" /><input type="hidden" name="submit" value="1" /><a href="#" id="img-cancel" class="jot-button-cancel">Cancel</a><input type="submit" name="go" class="jot-button" id="img-ok" value="Ok"></form>');
 });
 $(document).on('submit','form#image-insert-form',function(event){
 	event.preventDefault();
@@ -547,20 +547,22 @@ $(document).on('submit','form#image-insert-form',function(event){
 	});
 	// After Upload
 	request.done(function(returndata){
+		console.log("done");
 		// If there's a problem.
 		if(returndata.error_msg!=''){
 			//show error message
-			alert("Sorry, the file did not upload correctly.");
+			alert(returndata.error_msg);
 		}
 		else {
+			console.log("no error");
 			//put together image
 			uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
 			// Insert Image
-			$('#imagereplace').replaceWith(uploaded_tag);
+			$('.imagereplace').replaceWith(uploaded_tag);
 			// Finish up
 			closeModal();
 			//save page
-			savePage();
+			//savePage();
 		}
 	});
 });
@@ -632,7 +634,7 @@ $(document.body).on("click", "#"+uniqueId+" .addDocument", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','docreplace','', editorId);
-	startModal('<h1>Add Document Link</h1><br><form id="document-insert-form"><label>Select Document</label><input type="file" id="docbrowse"><label>Document Link Text</label><input type="text" id="doc-text" autofocus><a href="#" id="doc-cancel" class="jot-button-cancel">Cancel</a><input type="submit" class="jot-button" id="doc-ok" value="Ok"></form>');
+	startModal('<h1>Add Document Link</h1><br><form id="document-insert-form" enctype="multipart/form-data"><label>Select Document</label><input type="file" name="image" id="docbrowse"><label>Document Link Text</label><input type="text" value="'+currentlySelected+'" name="description" id="doc-text" autofocus><input type="hidden" name="filetype" value="document" /><input type="hidden" name="submit" value="1" /><a href="#" id="doc-cancel" class="jot-button-cancel">Cancel</a><input type="submit" class="jot-button" id="doc-ok" value="Ok"></form>');
 });
 $(document).on('submit','form#document-insert-form',function(event){
 	event.preventDefault();
@@ -660,13 +662,13 @@ $(document).on('submit','form#document-insert-form',function(event){
 		}
 		else {
 			//put together image
-			uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
+			uploaded_tag = '<a href="'+returndata.new_file+'" title="'+returndata.file_description+'" target="_blank">'+returndata.file_description+'</a>';
 			// Insert Image
-			$('#imagereplace').replaceWith(uploaded_tag);
+			$('.docreplace').replaceWith(uploaded_tag);
 			// Finish up
 			closeModal();
 			//save page
-			savePage();
+			//savePage();
 		}
 	});
 });
@@ -844,7 +846,7 @@ $(document.body).on("click", "#table-update-cancel", function(event) {
 	closeModal();
 });
 
-$(document.body).on("click", "#jot-toolbar a, .jot-modal a, .jot-modal button", function(event) {
+$(document.body).on("click", ".jot-toolbar a, .jot-modal a, .jot-modal button, .jot-context-menu a", function(event) {
 	event.preventDefault();
 });
 
