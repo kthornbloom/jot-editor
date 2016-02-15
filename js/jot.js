@@ -7,22 +7,22 @@ Jot by Kevin Thornbloom is licensed under a Creative Commons Attribution-ShareAl
 		joteditor: function(options) {
 			var defaults = {
 				effectDuration: 5000,
-				toolbar: ["bold","italic","strike","underline","clearFormat","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","table","hr","divider","code"]
+				toolbar: ["bold","italic","strike","underline","clearFormat","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","embed","table","hr","divider","code"]
 			}
 /*
-d8888b. db    db d888888b db      d8888b. 
-88  `8D 88    88   `88'   88      88  `8D 
-88oooY' 88    88    88    88      88   88 
-88~~~b. 88    88    88    88      88   88 
-88   8D 88b  d88   .88.   88booo. 88  .8D 
-Y8888P' ~Y8888P' Y888888P Y88888P Y8888D' 
+d8888b. db    db d888888b db      d8888b.
+88  `8D 88    88   `88'   88      88  `8D
+88oooY' 88    88    88    88      88   88
+88~~~b. 88    88    88    88      88   88
+88   8D 88b  d88   .88.   88booo. 88  .8D
+Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 */
 			var options = $.extend(defaults, options),
 				that = this,
 				uniqueId = $(this).attr('id'),
-				/* 
+				/*
 					HTML making up each individual button
-					Note: Use &#34; for triple nested double quotes 
+					Note: Use &#34; for triple nested double quotes
 				*/
 				toolBold = "<a href='#' title='bold' onclick='document.execCommand (&#34;bold&#34;, false, null);'><img src='jot-icons/ico-bold.svg'></a>",
 				toolItalic = "<a href='#' title='italic' onclick='document.execCommand (&#34;italic&#34;, false, null);'><img src='jot-icons/ico-italic.svg'></a>",
@@ -40,11 +40,12 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				toolAnchor = "<a href='#' title='Anchor' class='addAnchor'><img src='jot-icons/ico-anchor.svg'></a>",
 				toolImage = "<a href='#' title='Insert Image' class='addImage'><img src='jot-icons/ico-image.svg'></a>",
 				toolDocument = "<a href='#' title='Insert Document Link' class='addDocument'><img src='jot-icons/ico-file-o.svg'></a>",
+				toolEmbed = "<a href='#' title='Insert Embed Code' class='addEmbed'><img src='jot-icons/ico-share.svg'></a>",
 				toolTable = "<a href='#' title='Insert Table' class='addTable'><img src='jot-icons/ico-table.svg'></a>",
 				toolHr = "<a href='#' title='Insert Horizontal Line' onclick='document.execCommand(&#34;insertHorizontalRule&#34;, false, null);''><img src='jot-icons/ico-hr.svg'></a>",
 				toolCode = "<a href='#' title='View Source'><img src='jot-icons/ico-code.svg'></a>",
 				toolDivider = "<div class='jot-divider'></div>"
-			
+
 			$(this).attr('contenteditable','true').wrap('<div class="jot-wrap" id="'+uniqueId+'"></div>');
 			$(this).attr('id','');
 			$(this).parent().prepend('<div class="jot-toolbar"></div>').append('<textarea class="jot-result" hidden></textarea>');
@@ -102,6 +103,9 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 					case "image":
 						$(this).parent().find('.jot-toolbar').append(toolImage);
 						break;
+					case "embed":
+						$(this).parent().find('.jot-toolbar').append(toolEmbed);
+						break;
 					case "document":
 						$(this).parent().find('.jot-toolbar').append(toolDocument);
 						break;
@@ -120,12 +124,12 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 					}
 				}
 /*
- .o88b.  .d88b.  d8888b. d88888b 
-d8P  Y8 .8P  Y8. 88  `8D 88'     
-8P      88    88 88oobY' 88ooooo 
-8b      88    88 88`8b   88~~~~~ 
-Y8b  d8 `8b  d8' 88 `88. 88.     
- `Y88P'  `Y88P'  88   YD Y88888P 
+ .o88b.  .d88b.  d8888b. d88888b
+d8P  Y8 .8P  Y8. 88  `8D 88'
+8P      88    88 88oobY' 88ooooo
+8b      88    88 88`8b   88~~~~~
+Y8b  d8 `8b  d8' 88 `88. 88.
+ `Y88P'  `Y88P'  88   YD Y88888P
 */
 // Force plain text paste
 $('[contenteditable]').on('paste', function(e) {
@@ -225,7 +229,7 @@ $(document.body).on("click", ".removeFormatting", function(event) {
 	return false;
 });
 
-// Paste At Caret Function	
+// Paste At Caret Function
 function pasteHtmlAtCaret(html, selector) {
 	//console.log('pasteHtmlAtCaret function ran');
 	var sel, range, parent, node = null;
@@ -358,11 +362,11 @@ $('div[contenteditable]').keydown(function(e) {
 });
 
 /*
-.88b  d88.  .d88b.  d8888b.  .d8b.  db      
-88'YbdP`88 .8P  Y8. 88  `8D d8' `8b 88      
-88  88  88 88    88 88   88 88ooo88 88      
-88  88  88 88    88 88   88 88~~~88 88      
-88  88  88 `8b  d8' 88  .8D 88   88 88booo. 
+.88b  d88.  .d88b.  d8888b.  .d8b.  db
+88'YbdP`88 .8P  Y8. 88  `8D d8' `8b 88
+88  88  88 88    88 88   88 88ooo88 88
+88  88  88 88    88 88   88 88~~~88 88
+88  88  88 `8b  d8' 88  .8D 88   88 88booo.
 YP  YP  YP  `Y88P'  Y8888D' YP   YP Y88888P
 */
 
@@ -378,7 +382,7 @@ startModal = function(content) {
 		transform: 'scale(1)'
 	})
 }
-/* Need a way to remove extra markup 
+/* Need a way to remove extra markup
 $(document).keyup(function(e) {
 	if ($('.jot-modal').is(':visible')) {
 		if (event.which == 27) {
@@ -395,7 +399,7 @@ closeModal = function(){
 	setTimeout(function(){
 		$('.jot-modal').remove();
 	},500);
-	
+
 	$('body').css({
 		overflow: '',
 		height: ''
@@ -403,13 +407,16 @@ closeModal = function(){
 }
 
 /*
-.d8888.  .d8b.  db    db d88888b 
-88'  YP d8' `8b 88    88 88'     
-`8bo.   88ooo88 Y8    8P 88ooooo 
-  `Y8b. 88~~~88 `8b  d8' 88~~~~~ 
-db   8D 88   88  `8bd8'  88.     
+.d8888.  .d8b.  db    db d88888b
+88'  YP d8' `8b 88    88 88'
+`8bo.   88ooo88 Y8    8P 88ooooo
+  `Y8b. 88~~~88 `8b  d8' 88~~~~~
+db   8D 88   88  `8bd8'  88.
 `8888Y' YP   YP    YP    Y88888P
 */
+
+var getHtml = $("#"+uniqueId+" .jot").html();
+$("#"+uniqueId+" .jot-result").html(getHtml);
 
 $("#"+uniqueId+" .jot").bind('blur keyup paste copy cut mouseup', function () {
 	var getHtml = $(this).html();
@@ -417,12 +424,12 @@ $("#"+uniqueId+" .jot").bind('blur keyup paste copy cut mouseup', function () {
 })
 
 /*
-db      d888888b .d8888. d888888b 
-88        `88'   88'  YP `~~88~~' 
-88         88    `8bo.      88    
-88         88      `Y8b.    88    
-88booo.   .88.   db   8D    88    
-Y88888P Y888888P `8888Y'    YP 
+db      d888888b .d8888. d888888b
+88        `88'   88'  YP `~~88~~'
+88         88    `8bo.      88
+88         88      `Y8b.    88
+88booo.   .88.   db   8D    88
+Y88888P Y888888P `8888Y'    YP
 */
 
 insertList = function (elem, parentElem, editorId){
@@ -442,19 +449,19 @@ insertList = function (elem, parentElem, editorId){
 }
 
 /*
-db      d888888b d8b   db db   dD 
-88        `88'   888o  88 88 ,8P' 
-88         88    88V8o 88 88,8P   
-88         88    88 V8o88 88`8b   
-88booo.   .88.   88  V888 88 `88. 
-Y88888P Y888888P VP   V8P YP   YD 
+db      d888888b d8b   db db   dD
+88        `88'   888o  88 88 ,8P'
+88         88    88V8o 88 88,8P
+88         88    88 V8o88 88`8b
+88booo.   .88.   88  V888 88 `88.
+Y88888P Y888888P VP   V8P YP   YD
 */
 $(document.body).on("click", "#"+uniqueId+" .addLink", function(event) {
 	var currentlySelected = getSelectionHtml(),
 		editorId = $(this).parents('.jot-wrap').attr('id');
 	wrapElement('span','','linkreplace','', editorId);
 	startModal('<h1>Add Link</h1><br><label>URL</label><input type="text" placeholder="http://www.example.com" id="linkURL" autofocus><label>Text</label><input type="text" placeholder="Link Text" id="linkText" value="'+currentlySelected+'"><a href="#" id="link-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="link-ok" class="jot-button">OK</a>');
-	
+
 	 $("#linkUrl").focus();
 });
 $(document.body).on("click", "#link-ok", function(event) {
@@ -467,6 +474,7 @@ $(document.body).on("click", "#link-ok", function(event) {
 $(document.body).on("click", "#link-cancel", function(event) {
 	closeModal();
 	$('.linkreplace').contents().unwrap();
+	$('.linkreplace').remove();
 });
 
 $(document.body).on("click", ".removeLink", function(event) {
@@ -475,12 +483,90 @@ $(document.body).on("click", ".removeLink", function(event) {
 	return false;
 });
 /*
- .d8b.  d8b   db  .o88b. db   db  .d88b.  d8888b. 
-d8' `8b 888o  88 d8P  Y8 88   88 .8P  Y8. 88  `8D 
-88ooo88 88V8o 88 8P      88ooo88 88    88 88oobY' 
-88~~~88 88 V8o88 8b      88~~~88 88    88 88`8b   
-88   88 88  V888 Y8b  d8 88   88 `8b  d8' 88 `88. 
-YP   YP VP   V8P  `Y88P' YP   YP  `Y88P'  88   YD 
+d88888b .88b  d88. d8888b. d88888b d8888b.
+88'     88'YbdP`88 88  `8D 88'     88  `8D
+88ooooo 88  88  88 88oooY' 88ooooo 88   88
+88~~~~~ 88  88  88 88~~~b. 88~~~~~ 88   88
+88.     88  88  88 88   8D 88.     88  .8D
+Y88888P YP  YP  YP Y8888P' Y88888P Y8888D'
+*/
+$(document.body).on("click", "#"+uniqueId+" .addEmbed", function(event) {
+	var currentlySelected = getSelectionHtml(),
+		editorId = $(this).parents('.jot-wrap').attr('id');
+	wrapElement('span','','embedreplace','', editorId);
+	startModal('<h1>Add Embed</h1><br><label>Embed Code</label><input type="text" placeholder="http://www.example.com" id="embedCode" autofocus><label><a href="#" id="embed-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="embed-ok" class="jot-button">OK</a>');
+
+	 $("#embedCode").focus();
+});
+$(document.body).on("click", "#embed-ok", function(event) {
+	var embedCode = $('#embedCode').val();
+	$('.embedreplace').replaceWith("<div class='rwd-embed' contenteditable='false' style='max-width:100%;'><div class='rwd-aspect' contenteditable='false>"+embedCode+"</div></div>");
+	closeModal();
+});
+$(document.body).on("click", "#embed-cancel", function(event) {
+	closeModal();
+	$('.embedreplace').contents().unwrap();
+	$('.embedreplace').remove();
+});
+
+/* Right click Embed */
+$(document).on('contextmenu', '#'+uniqueId+' .rwd-embed', function (event) {
+	event.preventDefault();
+	var getembed = $(this).html();
+	removeJotContext();
+   $(this).attr('id','jot-selected-embed');
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Embed Position</div><a href="#" class="jot-set-embed-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-embed-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-embed-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-embed-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Embed Properties</div>    <a href="#" class="removeEmbed"><img src="jot-icons/ico-times.svg">Delete Embed</a><a href="#" class="jot-embed-properties"><img src="jot-icons/ico-sliders.svg">Properties</a></div>')
+		.appendTo("#"+uniqueId+"")
+		.css({
+		top: (event.pageY - 13) + "px",
+		left: (event.pageX + 7) + "px"
+	});
+   return false;
+});
+
+$(document.body).on("click", ".removeEmbed", function(event) {
+	$('#jot-selected-embed').remove();
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-embed-left", function(event) {
+	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-left');
+	$('#jot-selected-embed').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-embed-right", function(event) {
+	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-right');
+	$('#jot-selected-embed').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-embed-center", function(event) {
+	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-center');
+	$('#jot-selected-embed').attr('id','');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-set-embed-inline", function(event) {
+	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-inline');
+	$('#jot-selected-embed').attr('id','');
+});
+/* Properties */
+$(document.body).on("click", "#"+uniqueId+" .jot-embed-properties", function(event) {
+	var currentEmbedCode = $('#jot-selected-embed .rwd-aspect').html(),
+		currentEmbedWidth = $('#jot-selected-embed')[0].style.width;
+	startModal('<h1>Embed Properties</h1><br>Max Width</label><input type="text" value="'+currentEmbedWidth+'" placeholder="px or %" id="jot-embed-width"><a href="#" id="embed-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="embed-update-ok" class="jot-button">OK</a>');
+});
+
+/* Update Image Properties */
+$(document.body).on("click", "#embed-update-ok", function(event) {
+	var updateEmbedwidth = $('#jot-embed-width').val();
+	$('#jot-selected-embed').css('width',updateEmbedwidth);
+	closeModal();
+});
+$(document.body).on("click", "#embed-update-cancel", function(event) {
+	closeModal();
+	$('#jot-selected-embed').attr('id','');
+});
+/*
+ .d8b.  d8b   db  .o88b. db   db  .d88b.  d8888b.
+d8' `8b 888o  88 d8P  Y8 88   88 .8P  Y8. 88  `8D
+88ooo88 88V8o 88 8P      88ooo88 88    88 88oobY'
+88~~~88 88 V8o88 8b      88~~~88 88    88 88`8b
+88   88 88  V888 Y8b  d8 88   88 `8b  d8' 88 `88.
+YP   YP VP   V8P  `Y88P' YP   YP  `Y88P'  88   YD
 */
 $(document.body).on("click", "#"+uniqueId+" .addAnchor", function(event) {
 	var currentlySelected = getSelectionHtml(),
@@ -498,6 +584,7 @@ $(document.body).on("click", "#anchor-ok", function(event) {
 $(document.body).on("click", "#anchor-cancel", function(event) {
 	closeModal();
 	$('.anchorreplace').contents().unwrap();
+	$('.anchorreplace').remove();
 });
 /* Right click anchor */
 $(document).on('contextmenu', '#'+uniqueId+' .jot .anchor', function (event) {
@@ -511,13 +598,13 @@ $(document).on('contextmenu', '#'+uniqueId+' .jot .anchor', function (event) {
 		left: (event.pageX + 7) + "px"
 	});
 	return false;
-}); 
+});
 /*
-d888888b .88b  d88.  d888b  
-  `88'   88'YbdP`88 88' Y8b 
-   88    88  88  88 88      
-   88    88  88  88 88  ooo 
-  .88.   88  88  88 88. ~8~ 
+d888888b .88b  d88.  d888b
+  `88'   88'YbdP`88 88' Y8b
+   88    88  88  88 88
+   88    88  88  88 88  ooo
+  .88.   88  88  88 88. ~8~
 Y888888P YP  YP  YP  Y888P
 */
 document.execCommand("enableObjectResizing", false, false);
@@ -533,7 +620,7 @@ $(document).on('submit','form#image-insert-form',function(event){
 	event.stopImmediatePropagation();
 	// Show spinner
 	$('#img-ok').remove();
-	$('#image-insert-form').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
+	$('#image-insert-form').append('<a href="#" class="jot-button jot-load-btn"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
 	// Get form data
 	formData = new FormData($(this)[0]);
 	// Upload
@@ -552,6 +639,8 @@ $(document).on('submit','form#image-insert-form',function(event){
 		if(returndata.error_msg!=''){
 			//show error message
 			alert(returndata.error_msg);
+			$('.jot-load-btn').remove();
+			$('#image-insert-form').append('<input type="submit" name="go" class="jot-button" id="img-ok" value="Ok">');
 		}
 		else {
 			console.log("no error");
@@ -568,6 +657,10 @@ $(document).on('submit','form#image-insert-form',function(event){
 });
 
 $(document.body).on("click", "#img-cancel", function(event) {
+	// remove placeholder if selected text
+	$('.imagereplace').contents().unwrap();
+	// remove empty placeholder
+	$('.imagereplace').remove();
 	closeModal();
 });
 
@@ -576,14 +669,14 @@ $(document).on('contextmenu', '#'+uniqueId+' .jot img', function (event) {
 	event.preventDefault();
 	removeJotContext();
    $(this).attr('id','jot-selected-img');
-   $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-image.svg">Properties</a></div>')
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-sliders.svg">Properties</a></div>')
 		.appendTo("#"+uniqueId+"")
 		.css({
 		top: (event.pageY - 13) + "px",
 		left: (event.pageX + 7) + "px"
 	});
    return false;
-}); 
+});
 
 /* Left */
 $(document.body).on("click", "#"+uniqueId+" .jot-set-img-left", function(event) {
@@ -621,11 +714,11 @@ $(document.body).on("click", "#img-update-cancel", function(event) {
 });
 
 /*
-d8888b.  .d88b.   .o88b. .d8888. 
-88  `8D .8P  Y8. d8P  Y8 88'  YP 
-88   88 88    88 8P      `8bo.   
-88   88 88    88 8b        `Y8b. 
-88  .8D `8b  d8' Y8b  d8 db   8D 
+d8888b.  .d88b.   .o88b. .d8888.
+88  `8D .8P  Y8. d8P  Y8 88'  YP
+88   88 88    88 8P      `8bo.
+88   88 88    88 8b        `Y8b.
+88  .8D `8b  d8' Y8b  d8 db   8D
 Y8888D'  `Y88P'   `Y88P' `8888Y'
 */
 
@@ -641,7 +734,7 @@ $(document).on('submit','form#document-insert-form',function(event){
 	event.stopImmediatePropagation();
 	// Show spinner
 	$('#doc-ok').remove();
-	$('#document-insert-form').append('<a href="#" class="jot-button"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
+	$('#document-insert-form').append('<a href="#" class="jot-button jot-load-btn"><img class="jot-spin" src="jot-icons/ico-spinner-white.svg"></a>');
 	// Get form data
 	formData = new FormData($(this)[0]);
 	// Upload
@@ -659,6 +752,8 @@ $(document).on('submit','form#document-insert-form',function(event){
 		if(returndata.error_msg!=''){
 			//show error message
 			alert("Sorry, the file did not upload correctly.");
+			$('.jot-load-btn').remove();
+			$('#image-insert-form').append('<input type="submit" class="jot-button" id="doc-ok" value="Ok">');
 		}
 		else {
 			//put together image
@@ -673,13 +768,21 @@ $(document).on('submit','form#document-insert-form',function(event){
 	});
 });
 
+$(document.body).on("click", "#doc-cancel", function(event) {
+	closeModal();
+	// remove placeholder if selected text
+	$('.docreplace').contents().unwrap();
+	// remove empty placeholder
+	$('.docreplace').remove();
+});
+
 /*
-d888888b  .d8b.  d8888b. db      d88888b 
-`~~88~~' d8' `8b 88  `8D 88      88'     
-   88    88ooo88 88oooY' 88      88ooooo 
-   88    88~~~88 88~~~b. 88      88~~~~~ 
-   88    88   88 88   8D 88booo. 88.     
-   YP    YP   YP Y8888P' Y88888P Y88888P 
+d888888b  .d8b.  d8888b. db      d88888b
+`~~88~~' d8' `8b 88  `8D 88      88'
+   88    88ooo88 88oooY' 88      88ooooo
+   88    88~~~88 88~~~b. 88      88~~~~~
+   88    88   88 88   8D 88booo. 88.
+   YP    YP   YP Y8888P' Y88888P Y88888P
 */
 $(document.body).on("click", "#"+uniqueId+" .addTable", function(event) {
 	var currentlySelected = getSelectionHtml(),
@@ -725,7 +828,7 @@ $(document).on('contextmenu', '#'+uniqueId+' .jot td', function (event) {
 		left: (event.pageX + 7) + "px"
 	});
 	return false;
-}); 
+});
 
 // Add Row After
 $(document.body).on("click", "#"+uniqueId+" .insert-row-after", function(event) {

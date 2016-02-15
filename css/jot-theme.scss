@@ -1,3 +1,4 @@
+/*autobuild*/
 $highlight : #A9D1FF;
 @keyframes spin {
 	0%   { transform:rotate(0deg) scale(1.1);  }
@@ -5,7 +6,7 @@ $highlight : #A9D1FF;
 	100% { transform:rotate(720deg) scale(1.1);}
 }
 .jot-spin {
-	animation:spin 2s linear infinite; 
+	animation:spin 2s linear infinite;
 }
 .jot {
 	padding:30px;
@@ -43,6 +44,9 @@ $highlight : #A9D1FF;
 	}
 	blockquote:before {content:'"'}
 	blockquote:after {content:'"'}
+	a:link, a:visited {
+		color:$highlight;
+	}
 	.anchor {
 		display: inline-block;
 		width:15px;
@@ -56,6 +60,41 @@ $highlight : #A9D1FF;
 	#jot-selected-cell {
 		background:$highlight;
 	}
+	.rwd-embed {
+		max-width:100%;
+		position: relative;
+	}
+	.rwd-embed:after {
+		content:'';
+		position: absolute;
+		top:0;
+		left:0;
+		width:100%;
+		height:100%;
+		background:transparent;
+		z-index: 1;
+	}
+	.rwd-aspect {
+		position: relative;
+		padding-bottom: 56.25%; // This is the aspect ratio
+		height: 0;
+		overflow: hidden;
+		iframe,
+		object,
+		embed {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100% !important;
+			height: 100% !important;
+		}
+	}
+}
+.jot:after {
+	content:'';
+	clear:both;
+	display: block;
+	width:100%;
 }
 .img-left {
 	float:left;
