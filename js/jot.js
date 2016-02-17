@@ -794,7 +794,7 @@ $(document).on('submit','form#document-insert-form',function(event){
 			//show error message
 			alert("Sorry, the file did not upload correctly.");
 			$('.jot-load-btn').remove();
-			$('#image-insert-form').append('<input type="submit" class="jot-button" id="doc-ok" value="Ok">');
+			$('#document-insert-form').append('<input type="submit" class="jot-button" id="doc-ok" value="Ok">');
 		}
 		else {
 			//put together image
