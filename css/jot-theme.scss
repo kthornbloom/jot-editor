@@ -60,6 +60,21 @@ $highlight : #A9D1FF;
 	#jot-selected-cell {
 		background:$highlight;
 	}
+	.align-right, .align-left, .align-center, .align-justify {
+		display: block;
+	}
+	.align-right {
+		text-align: right;
+	}
+	.align-left {
+		text-align: left;
+	}
+	.align-center {
+		text-align: center;
+	}
+	.align-justify {
+		text-align: justify;
+	}
 	.rwd-embed {
 		max-width:100%;
 		position: relative;

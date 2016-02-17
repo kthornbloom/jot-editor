@@ -7,7 +7,7 @@ Jot by Kevin Thornbloom is licensed under a Creative Commons Attribution-ShareAl
 		joteditor: function(options) {
 			var defaults = {
 				effectDuration: 5000,
-				toolbar: ["bold","italic","strike","underline","clearFormat","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","embed","table","hr","divider","code"]
+				toolbar: ["bold","italic","strike","underline","clearFormat","divider","leftAlign","centerAlign","rightAlign","justifyAlign","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","embed","table","hr","divider"]
 			}
 /*
 d8888b. db    db d888888b db      d8888b.
@@ -23,6 +23,9 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				/*
 					HTML making up each individual button
 					Note: Use &#34; for triple nested double quotes
+
+					<a href="#" title="Align Left" rel="Left" onclick="alignElement('align-left');"><i class="fa fa-align-left"></i></a>
+
 				*/
 				toolBold = "<a href='#' title='bold' onclick='document.execCommand (&#34;bold&#34;, false, null);'><img src='jot-icons/ico-bold.svg'></a>",
 				toolItalic = "<a href='#' title='italic' onclick='document.execCommand (&#34;italic&#34;, false, null);'><img src='jot-icons/ico-italic.svg'></a>",
@@ -32,6 +35,10 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 				toolH1 = "<a href='#' title='Largest Heading' onclick='wrapElement(&#34;h1&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h1.svg'></a>",
 				toolH2 = "<a href='#' title='Medium Heading' onclick='wrapElement(&#34;h2&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h2.svg'></a>",
 				toolH3 = "<a href='#' title='Small Heading' onclick='wrapElement(&#34;h3&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-h3.svg'></a>",
+				toolLeft = "<a href='#' title='Align Left' onclick='alignElement(&#34;align-left&#34;);'><img src='jot-icons/ico-align-left.svg'></a>",
+				toolRight = "<a href='#' title='Align Right' onclick='alignElement(&#34;align-right&#34;);'><img src='jot-icons/ico-align-right.svg'></a>",
+				toolCenter = "<a href='#' title='Align Center' onclick='alignElement(&#34;align-center&#34;);'><img src='jot-icons/ico-align-center.svg'></a>",
+				toolJustify = "<a href='#' title='Align Justify' onclick='alignElement(&#34;align-justify&#34;);'><img src='jot-icons/ico-align-justify.svg'></a>",
 				toolUl = "<a href='#' title='Bulleted List' onclick='insertList(&#34;li&#34;,&#34;ul&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-ul.svg'></a>",
 				toolOl = "<a href='#' title='Numbered List' onclick='insertList(&#34;li&#34;,&#34;ol&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-ol.svg'></a>",
 				toolBlockquote = "<a href='#' title='Blockquote' onclick='wrapElement(&#34;blockquote&#34;,&#34;&#34;,&#34;&#34;,&#34;&#34;,&#34;"+uniqueId+"&#34;);'><img src='jot-icons/ico-blockquote.svg'></a>",
@@ -72,6 +79,18 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 						break;
 					case "paste":
 						$(this).parent().find('.jot-toolbar').append(toolPaste);
+						break;
+					case "leftAlign":
+						$(this).parent().find('.jot-toolbar').append(toolLeft);
+						break;
+					case "rightAlign":
+						$(this).parent().find('.jot-toolbar').append(toolRight);
+						break;
+					case "centerAlign":
+						$(this).parent().find('.jot-toolbar').append(toolCenter);
+						break;
+					case "justifyAlign":
+						$(this).parent().find('.jot-toolbar').append(toolJustify);
 						break;
 					case "h1":
 						$(this).parent().find('.jot-toolbar').append(toolH1);
@@ -298,6 +317,27 @@ function isSelectionInsideElement(tagName) {
 	return false;
 }
 
+// Add alignment stuff
+alignElement = function(className) {
+
+	sel = window.getSelection(),
+	getHtml = getSelectionHtml(),
+	isAlready = isSelectionInsideElement('font');
+	console.log(getHtml);
+
+	if (isAlready) {
+		removeSelectedElements("font");
+	} else {
+		var selected = $('#'+uniqueId+'').attr('rel'),
+			finalCode = "<font class="+className+">"+getHtml+"</font>";
+
+		range = sel.getRangeAt(0);
+		range.deleteContents();
+		pasteHtmlAtCaret(finalCode, '#'+uniqueId+'');
+	}
+
+}
+
 // Return selected HTML
 function getSelectionHtml() {
 	//console.log('getSelectionHtml function ran');
@@ -499,8 +539,9 @@ $(document.body).on("click", "#"+uniqueId+" .addEmbed", function(event) {
 	 $("#embedCode").focus();
 });
 $(document.body).on("click", "#embed-ok", function(event) {
+	event.preventDefault();
 	var embedCode = $('#embedCode').val();
-	$('.embedreplace').replaceWith("<div class='rwd-embed' contenteditable='false' style='max-width:100%;'><div class='rwd-aspect' contenteditable='false>"+embedCode+"</div></div>");
+	$('.embedreplace').replaceWith('<div class="rwd-embed"><div class="rwd-aspect">'+embedCode+'</div></div>');
 	closeModal();
 });
 $(document.body).on("click", "#embed-cancel", function(event) {
@@ -547,7 +588,7 @@ $(document.body).on("click", "#"+uniqueId+" .jot-set-embed-inline", function(eve
 $(document.body).on("click", "#"+uniqueId+" .jot-embed-properties", function(event) {
 	var currentEmbedCode = $('#jot-selected-embed .rwd-aspect').html(),
 		currentEmbedWidth = $('#jot-selected-embed')[0].style.width;
-	startModal('<h1>Embed Properties</h1><br>Max Width</label><input type="text" value="'+currentEmbedWidth+'" placeholder="px or %" id="jot-embed-width"><a href="#" id="embed-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="embed-update-ok" class="jot-button">OK</a>');
+	startModal('<h1>Embed Properties</h1><br>Max Width</label><input type="text" value="'+currentEmbedWidth+'" placeholder="400px or 50%" id="jot-embed-width"><a href="#" id="embed-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="embed-update-ok" class="jot-button">OK</a>');
 });
 
 /* Update Image Properties */
