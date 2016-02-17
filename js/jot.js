@@ -48,7 +48,7 @@ Y8888P' ~Y8888P' Y888888P Y88888P Y8888D'
 
 			$(this).attr('contenteditable','true').wrap('<div class="jot-wrap" id="'+uniqueId+'"></div>');
 			$(this).attr('id','');
-			$(this).parent().prepend('<div class="jot-toolbar"></div>').append('<textarea class="jot-result" hidden></textarea>');
+			$(this).parent().prepend('<div class="jot-toolbar"></div>').append('<textarea name="jot_result" class="jot-result" hidden></textarea>');
 
 
 
