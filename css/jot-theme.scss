@@ -31,6 +31,7 @@ $highlight : #A9D1FF;
 	}
 	ul, ol {
 		padding:10px 10px 10px 25px;
+		overflow: hidden;
 	}
 	ul li {
 		list-style:circle;
@@ -111,20 +112,35 @@ $highlight : #A9D1FF;
 	display: block;
 	width:100%;
 }
-.img-left {
-	float:left;
-	margin:10px 10px 10px 0;
+.float-right {
+	float: right;
+	margin: 0 0 30px 30px;
+	max-width: 100%;
+	height: auto;
+	clear:both;
 }
-.img-right {
-	float:right;
-	margin:10px 0 10px 10px;
+.float-left {
+	float: left;
+	max-width: 100%;
+	height: auto;
+	margin: 0 30px 30px 0;
+	clear:both;
 }
-.img-center {
+.float-normal {
+	max-width: 100%;
+	height: auto;
+	clear:both;
+}
+.float-center {
 	display: block;
-	margin:0 auto;
+	max-width: 100%;
+	height: auto;
+	margin: 10px auto;
+	clear:both;
 }
-.img-inline{
-	margin: 10px;
+.theme-img {
+	border-radius:6px;
+	box-shadow:0 0 5px #555;
 }
 .jot-toolbar {
 	background: #eee;

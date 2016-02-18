@@ -7,6 +7,7 @@ Jot by Kevin Thornbloom is licensed under a Creative Commons Attribution-ShareAl
 		joteditor: function(options) {
 			var defaults = {
 				effectDuration: 5000,
+				uploadScript: 'jackrabbit/upload.php',
 				toolbar: ["bold","italic","strike","underline","clearFormat","divider","leftAlign","centerAlign","rightAlign","justifyAlign","divider","h1","h2","h3","divider","ul","ol","blockquote","divider","link","unlink","anchor","divider","image","document","embed","table","hr","divider"]
 			}
 /*
@@ -666,7 +667,7 @@ $(document).on('submit','form#image-insert-form',function(event){
 	formData = new FormData($(this)[0]);
 	// Upload
 	var request = $.ajax({
-		url: 'upload.php',
+		url: options.uploadScript,
 		type: 'POST',
 		data: formData,
 		contentType: false,
@@ -686,7 +687,7 @@ $(document).on('submit','form#image-insert-form',function(event){
 		else {
 			console.log("no error");
 			//put together image
-			uploaded_tag = '<img src="'+returndata.new_file+'" class="img-inline" alt="'+returndata.file_description+'" />';
+			uploaded_tag = '<img src="'+returndata.new_file+'" class="float-normal" alt="'+returndata.file_description+'"/>';
 			// Insert Image
 			$('.imagereplace').replaceWith(uploaded_tag);
 			// Finish up
@@ -721,31 +722,36 @@ $(document).on('contextmenu', '#'+uniqueId+' .jot img', function (event) {
 
 /* Left */
 $(document.body).on("click", "#"+uniqueId+" .jot-set-img-left", function(event) {
-	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-left');
+	$('#jot-selected-img').removeClass('float-left float-right float-center float-normal').addClass('float-left');
 	$('#jot-selected-img').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-img-right", function(event) {
-	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-right');
+	$('#jot-selected-img').removeClass('float-left float-right float-center float-normal').addClass('float-right');
 	$('#jot-selected-img').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-img-center", function(event) {
-	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-center');
+	$('#jot-selected-img').removeClass('float-left float-right float-center float-normal').addClass('float-center');
 	$('#jot-selected-img').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-img-inline", function(event) {
-	$('#jot-selected-img').removeClass('img-left img-right img-center img-inline').addClass('img-inline');
+	$('#jot-selected-img').removeClass('float-left float-right float-center float-normal').addClass('img-inline');
 	$('#jot-selected-img').attr('id','');
 });
 /* Properties */
 $(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event) {
 	var currentImgsize = $('#jot-selected-img').attr('width'),
 		currentImgalt = $('#jot-selected-img').attr('alt');
+	if (!currentImgsize) {
+		currentImgsize = $('#jot-selected-img')[0].naturalWidth;
+		console.log(currentImgsize);
+	}
 	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
 });
 /* Update Image Properties */
 $(document.body).on("click", "#img-update-ok", function(event) {
 	var updateImgwidth = $('#jot-img-width').val(),
 		updateImgalt = $('#jot-img-alt').val();
+
 	$('#jot-selected-img').attr('width',updateImgwidth).attr('alt',updateImgalt);
 	closeModal();
 });
@@ -780,7 +786,7 @@ $(document).on('submit','form#document-insert-form',function(event){
 	formData = new FormData($(this)[0]);
 	// Upload
 	var request = $.ajax({
-		url: 'upload.php',
+		url: options.uploadScript,
 		type: 'POST',
 		data: formData,
 		contentType: false,
@@ -798,7 +804,7 @@ $(document).on('submit','form#document-insert-form',function(event){
 		}
 		else {
 			//put together image
-			uploaded_tag = '<a href="'+returndata.new_file+'" title="'+returndata.file_description+'" target="_blank">'+returndata.file_description+'</a>';
+			uploaded_tag = '<a href="'+returndata.new_file+'" title="'+returndata.file_description+'" target="_blank" class="doc-link">'+returndata.file_description+'</a>';
 			// Insert Image
 			$('.docreplace').replaceWith(uploaded_tag);
 			// Finish up
