@@ -460,10 +460,12 @@ var getHtml = $("#"+uniqueId+" .jot").html();
 $("#"+uniqueId+" .jot-result").html(getHtml);
 
 $("#"+uniqueId+" .jot").bind('blur keyup paste copy cut mouseup', function () {
-	var getHtml = $(this).html();
-	$("#"+uniqueId+" .jot-result").html(getHtml);
+	updateResult($(this));
 })
-
+function updateResult(thisObject){
+	var getHtml = thisObject.html();
+	$("#"+uniqueId+" .jot-result").html(getHtml);
+}
 /*
 db      d888888b .d8888. d888888b
 88        `88'   88'  YP `~~88~~'
@@ -1008,6 +1010,7 @@ $(document).bind("click", function (event) {
 function removeJotContext(){
 	$('.jot-context-menu').remove();
 	$('#jot-selected-cell').attr('id','');
+	updateResult($("#"+uniqueId+" .jot"));
 }
 
 		}
