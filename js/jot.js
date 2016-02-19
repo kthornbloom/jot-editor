@@ -244,6 +244,7 @@ function nextNode(node) {
 }
 
 $(document.body).on("click", ".removeFormatting", function(event) {
+	event.preventDefault();
 	removeSelectedElements("h1,h2,h3,h4,h5,h6,blockquote,figure");
 	document.execCommand('removeFormat', false, 'null');
 	return false;
@@ -324,13 +325,11 @@ alignElement = function(className) {
 	sel = window.getSelection(),
 	getHtml = getSelectionHtml(),
 	isAlready = isSelectionInsideElement('font');
-	console.log(getHtml);
-
+	
 	if (isAlready) {
 		removeSelectedElements("font");
 	} else {
-		var selected = $('#'+uniqueId+'').attr('rel'),
-			finalCode = "<font class="+className+">"+getHtml+"</font>";
+		var finalCode = "<font class="+className+">"+getHtml+"</font>";
 
 		range = sel.getRangeAt(0);
 		range.deleteContents();
@@ -463,6 +462,12 @@ $("#"+uniqueId+" .jot").bind('blur keyup paste copy cut mouseup', function () {
 	updateResult($(this));
 })
 function updateResult(thisObject){
+	$('.jot a').each(function() {
+		if($(this).is(':empty')){
+			$(this).remove();
+		}
+	});
+
 	var getHtml = thisObject.html();
 	$("#"+uniqueId+" .jot-result").html(getHtml);
 }
@@ -750,7 +755,29 @@ $(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event
 	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-img-remove", function(event) {
-	$('#jot-selected-img').remove();
+	var r = confirm("Are you sure you want to delete the image?");
+	if (r == true) {
+		$('#jot-selected-img').css('opacity','0');
+		var filename = $('#jot-selected-img').attr('src');
+		setTimeout(function(){
+			$('#jot-selected-img').remove();
+			//delete file
+			// post(file, data, callback, type); (only "file" is required)
+			$.post(  
+				"jackrabbit/ajax_update.php", //The update file
+				{ type: 'fileDelete', filename: filename },  // create an object will all values
+				//function that is called when server returns a value.
+				function(data){
+					if(data.error_msg!='')
+					{
+						alert(data.error_msg);
+					}
+				}, 
+				//How you want the data formated when it is returned from the server.
+				"json"
+			);
+		}, 300);
+	}
 });
 /* Update Image Properties */
 $(document.body).on("click", "#img-update-ok", function(event) {
