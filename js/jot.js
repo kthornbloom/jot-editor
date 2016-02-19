@@ -713,7 +713,7 @@ $(document).on('contextmenu', '#'+uniqueId+' .jot img', function (event) {
 	event.preventDefault();
 	removeJotContext();
    $(this).attr('id','jot-selected-img');
-   $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-sliders.svg">Properties</a></div>')
+   $('<div class="jot-context-menu"><div class="jot-context-heading">Image Position</div><a href="#" class="jot-set-img-left"><img src="jot-icons/ico-img-left.svg">Wrapped Left</a><a href="#" class="jot-set-img-right"><img src="jot-icons/ico-img-right.svg">Wrapped Right</a><a href="#" class="jot-set-img-center"><img src="jot-icons/ico-img-center.svg">Centered</a><a href="#" class="jot-set-img-inline"><img src="jot-icons/ico-img-inline.svg">Inline</a><div class="jot-context-heading">Image Properties</div><a href="#" class="jot-img-properties"><img src="jot-icons/ico-sliders.svg">Properties</a><a href="#" class="jot-img-remove"><img src="jot-icons/ico-times.svg">Remove</a></div>')
 		.appendTo("#"+uniqueId+"")
 		.css({
 		top: (event.pageY - 13) + "px",
@@ -748,6 +748,9 @@ $(document.body).on("click", "#"+uniqueId+" .jot-img-properties", function(event
 		console.log(currentImgsize);
 	}
 	startModal('<h1>Image Properties</h1><br><label>Max Width</label><input type="text" value="'+currentImgsize+'" placeholder="px or %" id="jot-img-width"><label>Description</label><input type="text" id="jot-img-alt" value="'+currentImgalt+'"><a href="#" id="img-update-cancel" class="jot-button-cancel">Cancel</a><a href="#" id="img-update-ok" class="jot-button">OK</a>');
+});
+$(document.body).on("click", "#"+uniqueId+" .jot-img-remove", function(event) {
+	$('#jot-selected-img').remove();
 });
 /* Update Image Properties */
 $(document.body).on("click", "#img-update-ok", function(event) {
