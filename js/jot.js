@@ -577,19 +577,19 @@ $(document.body).on("click", ".removeEmbed", function(event) {
 	$('#jot-selected-embed').remove();
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-embed-left", function(event) {
-	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-left');
+	$('#jot-selected-embed').removeClass('float-left float-right float-center float-normal').addClass('float-left');
 	$('#jot-selected-embed').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-embed-right", function(event) {
-	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-right');
+	$('#jot-selected-embed').removeClass('float-left float-right float-center float-normal').addClass('float-right');
 	$('#jot-selected-embed').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-embed-center", function(event) {
-	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-center');
+	$('#jot-selected-embed').removeClass('float-left float-right float-center float-normal').addClass('float-center');
 	$('#jot-selected-embed').attr('id','');
 });
 $(document.body).on("click", "#"+uniqueId+" .jot-set-embed-inline", function(event) {
-	$('#jot-selected-embed').removeClass('img-left img-right img-center img-inline').addClass('img-inline');
+	$('#jot-selected-embed').removeClass('float-left float-right float-center float-normal').addClass('float-normal');
 	$('#jot-selected-embed').attr('id','');
 });
 /* Properties */
